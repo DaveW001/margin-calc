@@ -11,6 +11,10 @@ This document serves as a standard guide for the AI assistant when starting new 
     *   **Git workflow instructions:** Specific `git` commands and procedures for the project's environment (check for files like `git-workflow.md`).
     *   **This AI guide:** (`ai-project-guide.md`) For overall project context and AI guidance.
     *   Any other markdown files or diagrams providing project context or requirements (e.g., mockups, architecture diagrams).
+*   **Always read and follow the instructions in `docs/git-workflow.md` for all git operations.**
+    *   Use only the git commands and procedures specified in that document for staging, committing, and pushing changes.
+    *   Do not use `&&` to chain commands; use sequential commands or semicolons as described.
+    *   If you are unsure about the correct git workflow, refer to `git-workflow.md` before running any git commands.
 *   **Familiarize yourself with the current state of the implementation plan** to understand completed tasks and the next priorities.
 *   **Verify the presence of the following essential documents within the `docs/` directory:**
     *   **Mockups:** Visual designs or wireframes.
