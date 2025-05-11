@@ -1,16 +1,18 @@
 ## Repository Information
 
+**IMPORTANT:** Before your first commit, please replace the placeholder values below (e.g., `[Your Repository Name]`) with your actual project details.
+
 *   **GitHub Owner/Username:** `DaveW001`
-*   **Repository Name:** `mission-insights-dashboard`
-*   **Repository URL:** `https://github.com/DaveW001/mission-insights-dashboard.git`
+*   **Repository Name:** `00-new-project-template`
+*   **Repository URL:** `https://github.com/DaveW001/00-new-project-template.git`
 *   **Primary Branch:** `main`
-*   **Remote Name:** `origin` (usually default)
+*   **Remote Name:** `origin`
 
 ---
 
 # Git Workflow Commands
 
-This document outlines the specific git commands that work reliably in our PowerShell environment for pushing changes to GitHub for the `mission-insights-dashboard` repository.
+This document outlines the specific git commands that work reliably in our PowerShell environment for pushing changes to GitHub for the `00-new-project-template` repository.
 
 ## Standard Workflow
 
@@ -38,8 +40,8 @@ git commit -m "type(scope): description of changes"
 ```
 
 Common types:
-- `feat`: New feature
-- `fix`: Bug fix
+- `feat`: New feature (e.g., `feat(ui): add OKR card`)
+- `fix`: Bug fix (e.g., `fix(art): resolve layout shift`)
 - `refactor`: Code change that neither fixes a bug nor adds a feature
 - `docs`: Documentation changes
 - `style`: Changes that don't affect code meaning (formatting, etc)
@@ -58,10 +60,12 @@ git push origin main
 
 ## Important Notes
 
-1.  Run git commands sequentially in PowerShell, ensuring each completes successfully before starting the next. Alternatively, for simple sequences, commands can be chained on a single line using semicolons (`;`). **Do not** chain with `&&`.
+1.  Run git commands sequentially in PowerShell, ensuring each completes successfully before starting the next. Alternatively, for simple sequences, commands can be chained on a single line using semicolons (`;`). **Do not** chain with `&&` as it behaves differently in PowerShell compared to other shells and may not execute subsequent commands if a prior one has non-zero exit status that PowerShell doesn't interpret as failure.
 2.  Use quotes around file paths that contain special characters like parentheses, spaces, etc.
 3.  Regularly use `git status` to identify and add any necessary untracked files to ensure your local repository matches what's intended for GitHub.
 4.  After pushing, you can verify again with `git status`. It should show "Your branch is up to date with 'origin/main'".
+5.  **Backups for Risky Changes:** If a set of changes is complex or has a higher likelihood of needing a rollback (especially for critical files like `.tsx` components), consider making a quick backup of the file (e.g., `MyComponent.tsx.backup`) before starting the modifications. This provides an immediate local restore point.
+6.  **Documentation of Changes:** When making major changes, especially to shared components or core logic, ensure that the usage of these components and the nature of the changes are well-documented, either in commit messages, related documentation files (like `project-structure.md`), or code comments where appropriate.
 
 ## Common Issues and Solutions
 
