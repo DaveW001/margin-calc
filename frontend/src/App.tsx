@@ -4,6 +4,7 @@ import { Header } from './components/Header'
 import { Sidebar } from './components/Sidebar'
 import { Routes, Route } from 'react-router-dom'
 import NewScenarioPage from './pages/NewScenarioPage'
+import SettingsPage from './pages/SettingsPage'
 
 const HomePage = () => (
   <div className="container mx-auto px-4 py-6">
@@ -27,13 +28,14 @@ function App() {
       </SignedOut>
 
       <SignedIn>
-        <div className="flex flex-1 pt-16">
+        <div className="flex flex-1">
           <Sidebar className="w-64 border-r border-gray-200 shadow-sm fixed top-16 left-0 h-[calc(100vh-4rem)] bg-white z-20 overflow-y-auto" />
           <div className="ml-64 flex-1 flex flex-col min-h-[calc(100vh-4rem)]">
-            <main className="flex-1 bg-gray-50">
+            <main className="flex-1 bg-gray-50 p-6">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/scenarios/new" element={<NewScenarioPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
               </Routes>
             </main>
           </div>
