@@ -22,6 +22,41 @@ import {
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 
+// Helper component for form field with label and tooltip
+const FormField = ({ 
+  id, 
+  label, 
+  tooltip, 
+  children 
+}: { 
+  id: string, 
+  label: string, 
+  tooltip: string, 
+  children: React.ReactNode 
+}) => (
+  <div className="form-field">
+    <div className="flex items-center gap-1.5 mb-2">
+      <Label 
+        htmlFor={id} 
+        className="text-sm font-medium text-gray-900"
+      >
+        {label}
+      </Label>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Info className="h-4 w-4 text-gray-400 cursor-help" />
+          </TooltipTrigger>
+          <TooltipContent side="right" align="start" className="max-w-xs bg-white p-3 text-gray-800">
+            <p className="text-sm">{tooltip}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+    {children}
+  </div>
+);
+
 const NewScenarioForm: React.FC = () => {
   const [staffType, setStaffType] = useState<'W2' | '1099'>('W2');
   const [workloadMode, setWorkloadMode] = useState<'monthly' | 'yearly'>('monthly');
@@ -94,138 +129,102 @@ const NewScenarioForm: React.FC = () => {
 
   return (
     <TooltipProvider>
-      <form className="space-y-8">
+      <form className="py-6">
         <FormSection title="Person & Project Info">
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('fullName')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <Input id="fullName" placeholder="Enter full name" />
-          </div>
+          <FormField 
+            id="fullName" 
+            label="Full Name" 
+            tooltip={getTooltipContent('fullName')}
+          >
+            <Input 
+              id="fullName" 
+              placeholder="Enter full name" 
+            />
+          </FormField>
 
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="role">Role/Title</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('role')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <Input id="role" placeholder="Enter role or title" />
-          </div>
+          <FormField 
+            id="role" 
+            label="Role/Title" 
+            tooltip={getTooltipContent('role')}
+          >
+            <Input 
+              id="role" 
+              placeholder="Enter role or title" 
+            />
+          </FormField>
 
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="projectName">Project Name</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('projectName')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <Input id="projectName" placeholder="Enter project name" />
-          </div>
+          <FormField 
+            id="projectName" 
+            label="Project Name" 
+            tooltip={getTooltipContent('projectName')}
+          >
+            <Input 
+              id="projectName" 
+              placeholder="Enter project name" 
+            />
+          </FormField>
 
-          <div className="space-y-2">
-            <div className="flex items-center mb-2">
-              <Label>Staff Type</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('staffType')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          <FormField 
+            id="staffType" 
+            label="Staff Type" 
+            tooltip={getTooltipContent('staffType')}
+          >
             <RadioGroup 
               defaultValue={staffType}
               onValueChange={(value: 'W2' | '1099') => setStaffType(value)}
-              className="flex space-x-4"
+              className="flex space-x-8 pt-1"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="W2" id="r1" />
-                <Label htmlFor="r1">W-2</Label>
+                <Label htmlFor="r1" className="cursor-pointer">W-2</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="1099" id="r2" />
-                <Label htmlFor="r2">1099</Label>
+                <Label htmlFor="r2" className="cursor-pointer">1099</Label>
               </div>
             </RadioGroup>
-          </div>
+          </FormField>
 
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="clickupLink">ClickUp Link</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('clickupLink')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <Input id="clickupLink" type="url" placeholder="Optional: https://..." />
-          </div>
+          <FormField 
+            id="clickupLink" 
+            label="ClickUp Link" 
+            tooltip={getTooltipContent('clickupLink')}
+          >
+            <Input 
+              id="clickupLink" 
+              type="url" 
+              placeholder="Optional: https://..." 
+            />
+          </FormField>
         </FormSection>
 
         <FormSection title="Time & Performance">
-          <div className="space-y-2">
-            <div className="flex items-center mb-2">
-              <Label>Workload Mode</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('workloadMode')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          <FormField 
+            id="workloadMode" 
+            label="Workload Mode" 
+            tooltip={getTooltipContent('workloadMode')}
+          >
             <RadioGroup 
               defaultValue={workloadMode}
               onValueChange={(value: 'monthly' | 'yearly') => setWorkloadMode(value)}
-              className="flex space-x-4"
+              className="flex space-x-8 pt-1"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="monthly" id="wm1" />
-                <Label htmlFor="wm1">Hours/Month</Label>
+                <Label htmlFor="wm1" className="cursor-pointer">Hours/Month</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yearly" id="wm2" />
-                <Label htmlFor="wm2">Hours/Year</Label>
+                <Label htmlFor="wm2" className="cursor-pointer">Hours/Year</Label>
               </div>
             </RadioGroup>
-          </div>
+          </FormField>
 
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="hours">Hours</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('hours')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          <FormField 
+            id="hours" 
+            label="Hours" 
+            tooltip={getTooltipContent('hours')}
+          >
             <Input
               id="hours"
               type="number"
@@ -233,27 +232,20 @@ const NewScenarioForm: React.FC = () => {
               value={hours}
               onChange={(e) => setHours(e.target.value)}
             />
-          </div>
+          </FormField>
 
-          <div className={cn("grid gap-2")}>
-            <div className="flex items-center">
-              <Label>Period</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('period')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          <FormField 
+            id="period" 
+            label="Period" 
+            tooltip={getTooltipContent('period')}
+          >
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   id="date"
                   variant="outline"
                   className={cn(
-                    "w-[300px] justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal",
                     !dateRange && "text-muted-foreground"
                   )}
                 >
@@ -283,20 +275,13 @@ const NewScenarioForm: React.FC = () => {
                 />
               </PopoverContent>
             </Popover>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="payableHoursOverride">Payable Hours Override</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('payableHoursOverride')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          </FormField>
+          
+          <FormField 
+            id="payableHoursOverride" 
+            label="Payable Hours Override" 
+            tooltip={getTooltipContent('payableHoursOverride')}
+          >
             <Input
               id="payableHoursOverride"
               type="number"
@@ -304,25 +289,18 @@ const NewScenarioForm: React.FC = () => {
               value={payableHoursOverride}
               onChange={(e) => setPayableHoursOverride(e.target.value)}
             />
-          </div>
+          </FormField>
         </FormSection>
 
         <FormSection title="Compensation Inputs">
           {staffType === 'W2' ? (
             <>
               {/* W2 Compensation Fields */}
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Label htmlFor="salary">Annual Salary ($)</Label>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{getTooltipContent('salary')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+              <FormField 
+                id="salary" 
+                label="Annual Salary ($)" 
+                tooltip={getTooltipContent('salary')}
+              >
                 <Input
                   id="salary"
                   type="number"
@@ -330,19 +308,12 @@ const NewScenarioForm: React.FC = () => {
                   value={salary}
                   onChange={(e) => setSalary(e.target.value)}
                 />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Label htmlFor="taxRate">Employer Tax Rate (%)</Label>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{getTooltipContent('taxRate')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+              </FormField>
+              <FormField 
+                id="taxRate" 
+                label="Employer Tax Rate (%)" 
+                tooltip={getTooltipContent('taxRate')}
+              >
                 <Input
                   id="taxRate"
                   type="number"
@@ -350,19 +321,12 @@ const NewScenarioForm: React.FC = () => {
                   value={taxRate}
                   onChange={(e) => setTaxRate(e.target.value)}
                 />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Label htmlFor="benefitsRate">Benefits Rate (%)</Label>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{getTooltipContent('benefitsRate')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+              </FormField>
+              <FormField 
+                id="benefitsRate" 
+                label="Benefits Rate (%)" 
+                tooltip={getTooltipContent('benefitsRate')}
+              >
                 <Input
                   id="benefitsRate"
                   type="number"
@@ -370,19 +334,12 @@ const NewScenarioForm: React.FC = () => {
                   value={benefitsRate}
                   onChange={(e) => setBenefitsRate(e.target.value)}
                 />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Label htmlFor="w2BonusRate">Bonus Rate (%)</Label>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{getTooltipContent('w2BonusRate')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+              </FormField>
+              <FormField 
+                id="w2BonusRate" 
+                label="Bonus Rate (%)" 
+                tooltip={getTooltipContent('w2BonusRate')}
+              >
                 <Input
                   id="w2BonusRate"
                   type="number"
@@ -390,23 +347,16 @@ const NewScenarioForm: React.FC = () => {
                   value={w2BonusRate}
                   onChange={(e) => setW2BonusRate(e.target.value)}
                 />
-              </div>
+              </FormField>
             </>
           ) : (
             <>
               {/* 1099 Compensation Fields */}
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Label htmlFor="hourlyRate">Hourly Rate ($)</Label>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{getTooltipContent('hourlyRate')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+              <FormField 
+                id="hourlyRate" 
+                label="Hourly Rate ($)" 
+                tooltip={getTooltipContent('hourlyRate')}
+              >
                 <Input
                   id="hourlyRate"
                   type="number"
@@ -414,46 +364,32 @@ const NewScenarioForm: React.FC = () => {
                   value={hourlyRate}
                   onChange={(e) => setHourlyRate(e.target.value)}
                 />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center mb-2">
-                  <Label>Bonus Type (1099)</Label>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{getTooltipContent('bonusType1099')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+              </FormField>
+              <FormField 
+                id="bonusType1099" 
+                label="Bonus Type (1099)" 
+                tooltip={getTooltipContent('bonusType1099')}
+              >
                 <RadioGroup 
                   defaultValue={bonusType1099}
                   onValueChange={(value: 'percent' | 'fixed') => setBonusType1099(value)}
-                  className="flex space-x-4"
+                  className="flex space-x-8 pt-1"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="percent" id="bt1" />
-                    <Label htmlFor="bt1">Percent (%)</Label>
+                    <Label htmlFor="bt1" className="cursor-pointer">Percent (%)</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="fixed" id="bt2" />
-                    <Label htmlFor="bt2">Fixed ($)</Label>
+                    <Label htmlFor="bt2" className="cursor-pointer">Fixed ($)</Label>
                   </div>
                 </RadioGroup>
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Label htmlFor="bonusValue1099">Bonus Value (1099)</Label>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{getTooltipContent('bonusValue1099')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
+              </FormField>
+              <FormField 
+                id="bonusValue1099" 
+                label="Bonus Value (1099)" 
+                tooltip={getTooltipContent('bonusValue1099')}
+              >
                 <Input
                   id="bonusValue1099"
                   type="number"
@@ -461,55 +397,41 @@ const NewScenarioForm: React.FC = () => {
                   value={bonusValue1099}
                   onChange={(e) => setBonusValue1099(e.target.value)}
                 />
-              </div>
+              </FormField>
             </>
           )}
         </FormSection>
 
         <FormSection title="Client Billing Inputs">
           {/* Billing Type Radio */}
-          <div className="space-y-2">
-            <div className="flex items-center mb-2">
-              <Label>Billing Type</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('billingType')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          <FormField 
+            id="billingType" 
+            label="Billing Type" 
+            tooltip={getTooltipContent('billingType')}
+          >
             <RadioGroup 
               defaultValue={billingType}
               onValueChange={(value: 'T&M' | 'FixedFee') => setBillingType(value)}
-              className="flex space-x-4"
+              className="flex space-x-8 pt-1"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="T&M" id="btm1" />
-                <Label htmlFor="btm1">Time & Materials</Label>
+                <Label htmlFor="btm1" className="cursor-pointer">Time & Materials</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="FixedFee" id="btm2" />
-                <Label htmlFor="btm2">Fixed Fee</Label>
+                <Label htmlFor="btm2" className="cursor-pointer">Fixed Fee</Label>
               </div>
             </RadioGroup>
-          </div>
+          </FormField>
 
           {/* Conditional Fields based on Billing Type */}
           {billingType === 'T&M' && (
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <Label htmlFor="billableRate">Billable Rate ($/hr)</Label>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{getTooltipContent('billableRate')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
+            <FormField 
+              id="billableRate" 
+              label="Billable Rate ($/hr)" 
+              tooltip={getTooltipContent('billableRate')}
+            >
               <Input
                 id="billableRate"
                 type="number"
@@ -517,22 +439,15 @@ const NewScenarioForm: React.FC = () => {
                 value={billableRate}
                 onChange={(e) => setBillableRate(e.target.value)}
               />
-            </div>
+            </FormField>
           )}
 
           {billingType === 'FixedFee' && (
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <Label htmlFor="fixedFeeAmount">Fixed Fee Amount ($)</Label>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{getTooltipContent('fixedFeeAmount')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
+            <FormField 
+              id="fixedFeeAmount" 
+              label="Fixed Fee Amount ($)" 
+              tooltip={getTooltipContent('fixedFeeAmount')}
+            >
               <Input
                 id="fixedFeeAmount"
                 type="number"
@@ -540,23 +455,16 @@ const NewScenarioForm: React.FC = () => {
                 value={fixedFeeAmount}
                 onChange={(e) => setFixedFeeAmount(e.target.value)}
               />
-            </div>
+            </FormField>
           )}
 
           {/* Billable Hours Override (Applies to T&M) */}
           {billingType === 'T&M' && (
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <Label htmlFor="billableHoursOverride">Billable Hours Override</Label>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{getTooltipContent('billableHoursOverride')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
+            <FormField 
+              id="billableHoursOverride" 
+              label="Billable Hours Override" 
+              tooltip={getTooltipContent('billableHoursOverride')}
+            >
               <Input
                 id="billableHoursOverride"
                 type="number"
@@ -564,23 +472,17 @@ const NewScenarioForm: React.FC = () => {
                 value={billableHoursOverride}
                 onChange={(e) => setBillableHoursOverride(e.target.value)}
               />
-            </div>
+            </FormField>
           )}
         </FormSection>
+
         <FormSection title="Overhead & Fees">
           {/* Overhead Allocation (%) */}
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="overheadAllocation">Overhead Allocation (%)</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('overheadAllocation')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          <FormField 
+            id="overheadAllocation" 
+            label="Overhead Allocation (%)" 
+            tooltip={getTooltipContent('overheadAllocation')}
+          >
             <Input
               id="overheadAllocation"
               type="number"
@@ -588,21 +490,14 @@ const NewScenarioForm: React.FC = () => {
               value={overheadAllocation}
               onChange={(e) => setOverheadAllocation(e.target.value)}
             />
-          </div>
+          </FormField>
 
           {/* HUBZone Fee (%) */}
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="hubzoneFee">HUBZone Fee (%)</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('hubzoneFee')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          <FormField 
+            id="hubzoneFee" 
+            label="HUBZone Fee (%)" 
+            tooltip={getTooltipContent('hubzoneFee')}
+          >
             <Input
               id="hubzoneFee"
               type="number"
@@ -610,76 +505,60 @@ const NewScenarioForm: React.FC = () => {
               value={hubzoneFee}
               onChange={(e) => setHubzoneFee(e.target.value)}
             />
-          </div>
+          </FormField>
 
           {/* HUBZone Resident Checkbox */}
-          <div className="flex items-center space-x-2 pt-2">
-            <Checkbox
-              id="isHubzoneResident"
-              checked={isHubzoneResident}
-              onCheckedChange={(checked) => setIsHubzoneResident(Boolean(checked))}
-            />
-            <div className="flex items-center">
+          <FormField 
+            id="isHubzoneResident" 
+            label="HUBZone Resident" 
+            tooltip={getTooltipContent('isHubzoneResident')}
+          >
+            <div className="flex items-center space-x-2 h-10 pt-1">
+              <Checkbox
+                id="isHubzoneResident"
+                checked={isHubzoneResident}
+                onCheckedChange={(checked) => setIsHubzoneResident(Boolean(checked))}
+                className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+              />
               <Label htmlFor="isHubzoneResident" className="cursor-pointer">
-                HUBZone Resident
+                Yes
               </Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('isHubzoneResident')}</p>
-                </TooltipContent>
-              </Tooltip>
             </div>
-          </div>
+          </FormField>
         </FormSection>
+
         <FormSection title="Tags & Scenario Group">
           {/* Tags Input */}
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="tags">Tags</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('tags')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          <FormField 
+            id="tags" 
+            label="Tags" 
+            tooltip={getTooltipContent('tags')}
+          >
             <Input
               id="tags"
               placeholder="e.g., proposal, backend, urgent"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
             />
-          </div>
+          </FormField>
 
           {/* Scenario Group Input */}
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Label htmlFor="scenarioGroup">Scenario Group</Label>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-4 w-4 ml-1.5 text-muted-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{getTooltipContent('scenarioGroup')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          <FormField 
+            id="scenarioGroup" 
+            label="Scenario Group" 
+            tooltip={getTooltipContent('scenarioGroup')}
+          >
             <Input
               id="scenarioGroup"
               placeholder="e.g., Q3 Initiatives, Project Phoenix"
               value={scenarioGroup}
               onChange={(e) => setScenarioGroup(e.target.value)}
             />
-          </div>
+          </FormField>
         </FormSection>
 
-        <div className="flex justify-end space-x-4 pt-4 border-t">
-          <Button type="button" variant="outline">Cancel</Button>
+        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end space-x-4">
+          <Button variant="outline" type="button">Cancel</Button>
           <Button type="submit">Save Scenario & View Summary</Button>
         </div>
       </form>
