@@ -8,6 +8,7 @@ When developing our Margin Calculator application with React, Vite, Tailwind CSS
 2. PostCSS configuration errors with Tailwind CSS v4
 3. Incompatibility between Tailwind CSS v4 and shadcn/ui components
 4. Font-related issues with the `font-sans` utility class
+5. Circular dependencies in Tailwind CSS `@apply` directives
 
 ## Root Causes
 
@@ -25,6 +26,10 @@ When developing our Margin Calculator application with React, Vite, Tailwind CSS
 
 4. **PostCSS Version Incompatibilities**:
    - Issues with PostCSS v8.5.3 and Tailwind CSS
+
+5. **Circular Dependencies in CSS**:
+   - Using `@apply grid` within a custom `.grid` class creates a circular reference
+   - Error: "You cannot `@apply` the `grid` utility here because it creates a circular dependency"
 
 ## Solutions Implemented
 
@@ -44,6 +49,10 @@ When developing our Margin Calculator application with React, Vite, Tailwind CSS
 4. **Fixed Font Configuration**:
    - Added proper font-family configuration in the Tailwind config
    - Used direct CSS properties for fonts instead of Tailwind utilities when needed
+
+5. **Resolved Circular Dependencies**:
+   - Renamed custom classes to avoid name conflicts with Tailwind utilities
+   - Used raw CSS for grid layouts instead of `@apply` directives in problematic areas
 
 ## Recommendations for Future Projects
 
@@ -65,4 +74,9 @@ When developing our Margin Calculator application with React, Vite, Tailwind CSS
 4. **Specific Package Constraints**:
    - shadcn/ui works best with Tailwind CSS v3.x 
    - PostCSS v8.4.x is more stable than v8.5.x
-   - Ensure Tailwind plugins are compatible with your Tailwind version 
+   - Ensure Tailwind plugins are compatible with your Tailwind version
+
+5. **Avoid Circular Dependencies**:
+   - Never name custom classes the same as Tailwind utility classes
+   - When using `@apply`, be careful not to create circular references
+   - Use unique class names with prefixes for custom components (e.g., `form-grid` instead of `grid`) 
