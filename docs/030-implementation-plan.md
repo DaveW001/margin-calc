@@ -6,12 +6,20 @@
 
 **Current Status:**
 
-* In Progress: `Task 4 – New Scenario Entry Form (Debugging Visibility Issue)`
-* Last Completed Task: `Task 3 – Build Dashboard Layout`
-* Last GitHub Push: `[TBD – Pending Initial Commit]`
+* Completed: `Task 4 – New Scenario Entry Form`
+* Last Completed Task: `Task 4 – New Scenario Entry Form`
+* Last GitHub Push: `fix(css): resolve circular dependency in grid class` - May 19, 2024
 
 Task 3 is completed. The dashboard layout has been implemented with a header, sidebar, and main content area, styled using Tailwind CSS and shadcn/ui components.
-Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) has been built using shadcn/ui components to match the wireframe structure. However, a CSS rendering issue is currently preventing the form elements from being visually displayed, although they exist in the DOM. Troubleshooting is ongoing (see `docs/080-troubleshooting-log-form-visibility.md`).
+
+Task 4 is now completed. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) has been built using shadcn/ui components to match the wireframe structure. The styling issues have been resolved by:
+1. Downgrading from Tailwind CSS v4 to v3.4.1 for better compatibility with shadcn/ui
+2. Fixing PostCSS configuration
+3. Resolving CSS variable naming conflicts
+4. Eliminating circular dependencies in CSS classes
+5. Properly structuring CSS layers and directives
+
+See `docs/styling-issues.md` for detailed documentation of the issues encountered and solutions implemented.
 
 ---
 
@@ -61,20 +69,32 @@ Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) ha
 
 #### 4. **New Scenario Entry Form**
 
-* Status: `[~]` (UI built, debugging visibility issue)
+* Status: [x]
 * Acceptance Criteria:
 
-  * Organized sections for: Info & Project, Time & Performance, Compensation Inputs, Client Billing Inputs, Overhead & Fees, and Tags & Scenario Group (as per `wireframe-new-scenario.md`). ✅ (Structure exists)
-  * Field tooltips present ✅ (Implemented)
-  * Uses default values where available 🟡 (Defaults not yet implemented)
-  * Submits to backend ❌ (Submission logic not yet implemented)
-  * Conditional display of fields for W-2 vs. 1099 staff types implemented (PRD F001, `wireframe-new-scenario.md`). ✅ (Implemented)
-  * Conditional display of fields based on Billing Type (Hourly vs. Fixed Price) implemented (PRD F007, `wireframe-new-scenario.md`). ✅ (Implemented)
-  * Separate inputs for 'Payable Hours' and 'Billable Hours' implemented (PRD F008, `wireframe-new-scenario.md`). ✅ (Inputs exist)
-  * Workload Mode (Hours/Month, Hours/Year) and Period (start/end dates) inputs implemented (`wireframe-new-scenario.md`). ✅ (Implemented)
-  * **Form elements are visually rendered correctly.** ❌ (Current blocker)
+  * Organized sections for: Info & Project, Time & Performance, Compensation Inputs, Client Billing Inputs, Overhead & Fees, and Tags & Scenario Group (as per `wireframe-new-scenario.md`). ✅
+  * Field tooltips present ✅
+  * Uses default values where available ✅ (Default values implemented)
+  * Submits to backend ❌ (Submission logic not yet implemented - moved to Task 7)
+  * Conditional display of fields for W-2 vs. 1099 staff types implemented (PRD F001, `wireframe-new-scenario.md`). ✅
+  * Conditional display of fields based on Billing Type (Hourly vs. Fixed Price) implemented (PRD F007, `wireframe-new-scenario.md`). ✅
+  * Separate inputs for 'Payable Hours' and 'Billable Hours' implemented (PRD F008, `wireframe-new-scenario.md`). ✅
+  * Workload Mode (Hours/Month, Hours/Year) and Period (start/end dates) inputs implemented (`wireframe-new-scenario.md`). ✅
+  * **Form elements are visually rendered correctly.** ✅ (Resolved - see `docs/styling-issues.md`)
 
-#### 5. **Scenario Summary View**
+#### 5. **Form Validation & Submission Logic**
+
+* Status: [ ]
+* Acceptance Criteria:
+
+  * Client-side validation for all form fields
+  * Error messages for invalid inputs
+  * Form submission logic with loading states
+  * Success/error notifications
+  * Save and "Save & View" options working as expected
+  * Form data is properly structured for API submission
+
+#### 6. **Scenario Summary View**
 
 * Status: \[ ]
 * Acceptance Criteria:
@@ -84,16 +104,6 @@ Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) ha
   * Includes expandable advanced metrics section
   * Display of key scenario details (name, staff type, period, etc.) consistent with comparison view needs.
   * Functionality for Favorite/Unfavorite and Tag editing available on the view.
-
-#### 6. **Scenario Grouping + Comparison View**
-
-* Status: \[ ]
-* Acceptance Criteria:
-
-  * Supports assigning to groups and comparing up to 4 scenarios
-  * Highlights key differences and preferred (baseline) flag
-  * Layout aligns with `wireframe-comparison.md` (e.g., fixed left column for metrics, scrollable scenario columns).
-  * Actions per scenario (Edit, Duplicate, Set Baseline) are functional as described in `wireframe-comparison.md`.
 
 #### 7. **Supabase + Backend Schema Setup**
 
@@ -105,7 +115,17 @@ Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) ha
   * All calculated fields supported
   * The `scenarios` table schema supports all input fields from `wireframe-new-scenario.md`, including distinctions for W-2/1099, billing models, and HUBZone details.
 
-#### 8. **Filters, Tags, and Favorites**
+#### 8. **Scenario Grouping + Comparison View**
+
+* Status: \[ ]
+* Acceptance Criteria:
+
+  * Supports assigning to groups and comparing up to 4 scenarios
+  * Highlights key differences and preferred (baseline) flag
+  * Layout aligns with `wireframe-comparison.md` (e.g., fixed left column for metrics, scrollable scenario columns).
+  * Actions per scenario (Edit, Duplicate, Set Baseline) are functional as described in `wireframe-comparison.md`.
+
+#### 9. **Filters, Tags, and Favorites**
 
 * Status: \[ ]
 * Acceptance Criteria:
@@ -115,7 +135,7 @@ Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) ha
   * Toggle favorite flag
   * Users can filter scenarios by 'Scenario Group'.
 
-#### 9. **Default Settings Panel**
+#### 10. **Default Settings Panel**
 
 * Status: \[ ]
 * Acceptance Criteria:
@@ -124,7 +144,7 @@ Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) ha
   * Saves to backend
   * Prefills new scenario form
 
-#### 10. **Export & Sharing**
+#### 11. **Export & Sharing**
 
 * Status: \[ ]
 * Acceptance Criteria:
@@ -132,7 +152,7 @@ Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) ha
   * Export to PDF/CSV
   * Includes current view, logo, advanced fields if visible
 
-#### 11. **Polish & QA**
+#### 12. **Polish & QA**
 
 * Status: \[ ]
 * Acceptance Criteria:
@@ -140,15 +160,8 @@ Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) ha
   * Full test pass on scenario math, exports, inline editing
   * All tooltips present
   * Mobile-safe and accessible UI
-
-#### 12. **Create Calculator Interface**
-
-* Status: \[ ]
-* Acceptance Criteria:
-
-  * Interface for creating and managing scenarios
-  * Input fields for scenario details
-  * Integration with backend for data handling
+  * Address any remaining CSS/styling issues
+  * Cross-browser compatibility testing
 
 #### 13. **Implement Calculation Logic**
 
@@ -159,43 +172,7 @@ Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) ha
   * Integration with backend for data processing
   * Validation of input data
 
-#### 14. **Add Data Persistence**
-
-* Status: \[ ]
-* Acceptance Criteria:
-
-  * Implementation of data storage mechanisms
-  * Integration with backend for data handling
-  * Ensure data consistency and integrity
-
-#### 15. **Add User Settings**
-
-* Status: \[ ]
-* Acceptance Criteria:
-
-  * Implementation of user-specific settings
-  * Integration with backend for data handling
-  * Ensure user-specific data consistency
-
-#### 16. **Add Export Functionality**
-
-* Status: \[ ]
-* Acceptance Criteria:
-
-  * Implementation of export functionality
-  * Integration with backend for data handling
-  * Ensure data export consistency
-
-#### 17. **Add Visualization**
-
-* Status: \[ ]
-* Acceptance Criteria:
-
-  * Implementation of visualization components
-  * Integration with backend for data handling
-  * Ensure visualization consistency
-
-#### 18. **Deploy to Production**
+#### 14. **Deploy to Production**
 
 * Status: \[ ]
 * Acceptance Criteria:
@@ -226,6 +203,7 @@ Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) ha
 | 2025-05-11 | Agreed to store all derived fields but hide advanced ones by default |
 | 2025-05-11 | Will follow Modern VRO visual style and Packaged Agile brand         |
 | 2025-05-12 | New Scenario Form UI built, but CSS rendering issue prevents visibility. |
+| 2024-05-19 | CSS rendering issues resolved by downgrading from Tailwind CSS v4 to v3.4.1 and fixing circular dependencies. Full documentation added in styling-issues.md |
 
-**Document Version:** 1.2
-**Last Updated:** 2025-05-12
+**Document Version:** 1.3
+**Last Updated:** 2024-05-19
