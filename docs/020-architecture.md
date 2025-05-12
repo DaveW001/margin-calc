@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-A full-stack web application built using Packaged Agile’s standard architecture to support flexible scenario-based staff margin modeling. It is secure, modular, and designed for easy extensibility.
+A full-stack web application built using Packaged Agile's standard architecture to support flexible scenario-based staff margin modeling. It is secure, modular, and designed for easy extensibility.
 
 ---
 
@@ -30,7 +30,7 @@ A full-stack web application built using Packaged Agile’s standard architectur
 
 | Layer      | Tech Stack                              |
 | ---------- | --------------------------------------- |
-| Frontend   | React, shadcn/ui, Radikal font          |
+| Frontend   | React (Vite), TypeScript, Tailwind CSS, shadcn/ui, Radikal font |
 | Auth       | Clerk.dev                               |
 | Backend    | FastAPI (Python 3.x), Pydantic          |
 | Database   | Supabase (PostgreSQL)                   |
@@ -43,14 +43,29 @@ A full-stack web application built using Packaged Agile’s standard architectur
 
 ### 4.1 Frontend (React)
 
-* **ScenarioFormPage**
+*   **Core UI:** Built using [React](https://react.dev/) (with [Vite](https://vitejs.dev/)) and [TypeScript](https://www.typescriptlang.org/).
+*   **Styling:** Uses [Tailwind CSS](https://tailwindcss.com/) (currently investigating v4 integration) configured via [PostCSS](https://postcss.org/). Customizations include the 'Radikal' font.
+*   **UI Components:** Leverages [shadcn/ui](https://ui.shadcn.com/) for pre-built, accessible components (e.g., `Input`, `Label`, `Button`, `RadioGroup`, `Checkbox`, `Tooltip`, `Popover`, `Calendar`).
+*   **Routing:** Uses `react-router-dom` for client-side navigation.
 
-  * New scenario creation and editing
-  * Organized into grouped sections
-  * Auto-naming of scenarios using "Name – Project"
-  * Pulls in defaults from settings
+*   **`NewScenarioPage` (`/scenarios/new`)**
+    *   Page component hosting the scenario creation form.
+    *   Renders `NewScenarioForm`.
 
-* **ScenarioSummaryView**
+*   **`NewScenarioForm`**
+    *   The main form component for creating/editing scenarios.
+    *   Uses `FormSection` to group related fields.
+    *   Employs various shadcn/ui components for input fields.
+    *   Manages form state using React `useState` hooks (potential future integration with `react-hook-form` and `zod` for validation).
+    *   Includes conditional rendering for staff type (W2/1099) and billing type (T&M/Fixed Fee).
+
+*   **`FormSection`**
+    *   Reusable component to render a section title and arrange child form elements (currently uses CSS Grid).
+
+*   **`Header`, `Sidebar`**
+    *   Basic layout components for navigation and authentication status.
+
+*   **ScenarioSummaryView**
 
   * Read-only display of scenario results
   * Includes inline editable fields (salary, bonus, rate, hours)
@@ -196,8 +211,9 @@ Derived Outputs:
 * Export to Excel/PDF
 * Margin alerts (e.g., red flag under 10%)
 * Integration with Slack or ClickUp for status notifications
+* Integration with `react-hook-form` and `zod` for form validation.
 
 ---
 
-**Version:** 1.3
-**Last Updated:** 2025-05-11
+**Version:** 1.4
+**Last Updated:** 2025-05-12

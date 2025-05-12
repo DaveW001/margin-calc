@@ -6,11 +6,12 @@
 
 **Current Status:**
 
-* In Progress: `Phase 3 – Build Dashboard Layout`
-* Last Completed Task: `Set Up Authentication`
+* In Progress: `Task 4 – New Scenario Entry Form (Debugging Visibility Issue)`
+* Last Completed Task: `Task 3 – Build Dashboard Layout`
 * Last GitHub Push: `[TBD – Pending Initial Commit]`
 
 Task 3 is completed. The dashboard layout has been implemented with a header, sidebar, and main content area, styled using Tailwind CSS and shadcn/ui components.
+Task 4 is in progress. The form UI (`NewScenarioForm.tsx`, `FormSection.tsx`) has been built using shadcn/ui components to match the wireframe structure. However, a CSS rendering issue is currently preventing the form elements from being visually displayed, although they exist in the DOM. Troubleshooting is ongoing (see `docs/080-troubleshooting-log-form-visibility.md`).
 
 ---
 
@@ -60,17 +61,18 @@ Task 3 is completed. The dashboard layout has been implemented with a header, si
 
 #### 4. **New Scenario Entry Form**
 
-* Status: \[ ]
+* Status: `[~]` (UI built, debugging visibility issue)
 * Acceptance Criteria:
 
-  * Organized sections for: Info & Project, Time & Performance, Compensation Inputs, Client Billing Inputs, Overhead & Fees, and Tags & Scenario Group (as per `wireframe-new-scenario.md`).
-  * Field tooltips present
-  * Uses default values where available
-  * Submits to backend
-  * Conditional display of fields for W-2 vs. 1099 staff types implemented (PRD F001, `wireframe-new-scenario.md`).
-  * Conditional display of fields based on Billing Type (Hourly vs. Fixed Price) implemented (PRD F007, `wireframe-new-scenario.md`).
-  * Separate inputs for 'Payable Hours' and 'Billable Hours' implemented (PRD F008, `wireframe-new-scenario.md`).
-  * Workload Mode (Hours/Month, Hours/Year) and Period (start/end dates) inputs implemented (`wireframe-new-scenario.md`).
+  * Organized sections for: Info & Project, Time & Performance, Compensation Inputs, Client Billing Inputs, Overhead & Fees, and Tags & Scenario Group (as per `wireframe-new-scenario.md`). ✅ (Structure exists)
+  * Field tooltips present ✅ (Implemented)
+  * Uses default values where available 🟡 (Defaults not yet implemented)
+  * Submits to backend ❌ (Submission logic not yet implemented)
+  * Conditional display of fields for W-2 vs. 1099 staff types implemented (PRD F001, `wireframe-new-scenario.md`). ✅ (Implemented)
+  * Conditional display of fields based on Billing Type (Hourly vs. Fixed Price) implemented (PRD F007, `wireframe-new-scenario.md`). ✅ (Implemented)
+  * Separate inputs for 'Payable Hours' and 'Billable Hours' implemented (PRD F008, `wireframe-new-scenario.md`). ✅ (Inputs exist)
+  * Workload Mode (Hours/Month, Hours/Year) and Period (start/end dates) inputs implemented (`wireframe-new-scenario.md`). ✅ (Implemented)
+  * **Form elements are visually rendered correctly.** ❌ (Current blocker)
 
 #### 5. **Scenario Summary View**
 
@@ -223,6 +225,7 @@ Task 3 is completed. The dashboard layout has been implemented with a header, si
 | 2025-05-11 | Approved HUBZone fee toggle and expandable advanced metrics          |
 | 2025-05-11 | Agreed to store all derived fields but hide advanced ones by default |
 | 2025-05-11 | Will follow Modern VRO visual style and Packaged Agile brand         |
+| 2025-05-12 | New Scenario Form UI built, but CSS rendering issue prevents visibility. |
 
-**Document Version:** 1.1
-**Last Updated:** 2025-05-11
+**Document Version:** 1.2
+**Last Updated:** 2025-05-12
