@@ -1,25 +1,28 @@
-import { SignInButton, SignOutButton, useUser } from '@clerk/clerk-react'
+import { SignInButton, SignOutButton, useUser } from "@clerk/clerk-react"
+import { Button } from "./ui/button"
 
-export default function Header() {
+export function Header() {
   const { isSignedIn } = useUser()
 
   return (
-    <header className="flex justify-between items-center p-4 bg-gray-100">
-      <h1 className="text-xl font-bold">Margin Calc</h1>
-      <div>
-        {!isSignedIn ? (
-          <SignInButton mode="modal">
-            <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-              Sign In
-            </button>
-          </SignInButton>
-        ) : (
-          <SignOutButton>
-            <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-              Sign Out
-            </button>
-          </SignOutButton>
-        )}
+    <header className="border-b">
+      <div className="container flex h-16 items-center px-4">
+        <div className="mr-4 flex">
+          <a className="mr-6 flex items-center space-x-2" href="/">
+            <span className="font-bold">Margin Calculator</span>
+          </a>
+        </div>
+        <div className="ml-auto flex items-center space-x-4">
+          {isSignedIn ? (
+            <SignOutButton>
+              <Button variant="outline">Sign Out</Button>
+            </SignOutButton>
+          ) : (
+            <SignInButton>
+              <Button>Sign In</Button>
+            </SignInButton>
+          )}
+        </div>
       </div>
     </header>
   )

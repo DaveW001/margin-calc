@@ -1,21 +1,29 @@
 import './App.css'
-import Header from './components/Header'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
+import { Header } from './components/Header'
+import { Sidebar } from './components/Sidebar'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto p-4">
-        <SignedIn>
-          <h2 className="text-2xl font-bold mb-4">Welcome to Margin Calc</h2>
-          <p>You are signed in. You can now access the application.</p>
-        </SignedIn>
-        <SignedOut>
-          <h2 className="text-2xl font-bold mb-4">Welcome to Margin Calc</h2>
-          <p>Please sign in to access the application.</p>
-        </SignedOut>
-      </main>
+      <div className="flex">
+        <Sidebar className="w-64 border-r" />
+        <main className="flex-1 p-6">
+          <SignedIn>
+            <div className="space-y-4">
+              <h1 className="text-2xl font-bold">Welcome to Margin Calculator</h1>
+              <p>Start calculating your margins by selecting an option from the sidebar.</p>
+            </div>
+          </SignedIn>
+          <SignedOut>
+            <div className="space-y-4">
+              <h1 className="text-2xl font-bold">Welcome to Margin Calculator</h1>
+              <p>Please sign in to access the calculator.</p>
+            </div>
+          </SignedOut>
+        </main>
+      </div>
     </div>
   )
 }
