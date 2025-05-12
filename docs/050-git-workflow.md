@@ -3,8 +3,8 @@
 **IMPORTANT:** Before your first commit, please replace the placeholder values below (e.g., `[Your Repository Name]`) with your actual project details.
 
 *   **GitHub Owner/Username:** `DaveW001`
-*   **Repository Name:** `00-new-project-template`
-*   **Repository URL:** `https://github.com/DaveW001/00-new-project-template.git`
+*   **Repository Name:** `margin-calc`
+*   **Repository URL:** `https://github.com/DaveW001/margin-calc.git`
 *   **Primary Branch:** `main`
 *   **Remote Name:** `origin`
 

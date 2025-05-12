@@ -6,9 +6,9 @@
 
 **Current Status:**
 
-* In Progress: `Phase 1 – Scaffold Project Structure`
+* In Progress: `Phase 1 ï¿½ Scaffold Project Structure`
 * Last Completed Task: `Requirements and Architecture Alignment`
-* Last GitHub Push: `[TBD – Pending Initial Commit]`
+* Last GitHub Push: `[TBD ï¿½ Pending Initial Commit]`
 
 ---
 
@@ -61,10 +61,14 @@
 * Status: \[ ]
 * Acceptance Criteria:
 
-  * Organized sections for: Info, Compensation, Billing, Fees
+  * Organized sections for: Info & Project, Time & Performance, Compensation Inputs, Client Billing Inputs, Overhead & Fees, and Tags & Scenario Group (as per `wireframe-new-scenario.md`).
   * Field tooltips present
   * Uses default values where available
   * Submits to backend
+  * Conditional display of fields for W-2 vs. 1099 staff types implemented (PRD F001, `wireframe-new-scenario.md`).
+  * Conditional display of fields based on Billing Type (Hourly vs. Fixed Price) implemented (PRD F007, `wireframe-new-scenario.md`).
+  * Separate inputs for 'Payable Hours' and 'Billable Hours' implemented (PRD F008, `wireframe-new-scenario.md`).
+  * Workload Mode (Hours/Month, Hours/Year) and Period (start/end dates) inputs implemented (`wireframe-new-scenario.md`).
 
 #### 5. **Scenario Summary View**
 
@@ -74,6 +78,8 @@
   * View of revenue and margin (monthly + annual)
   * Includes inline editable fields
   * Includes expandable advanced metrics section
+  * Display of key scenario details (name, staff type, period, etc.) consistent with comparison view needs.
+  * Functionality for Favorite/Unfavorite and Tag editing available on the view.
 
 #### 6. **Scenario Grouping + Comparison View**
 
@@ -82,6 +88,8 @@
 
   * Supports assigning to groups and comparing up to 4 scenarios
   * Highlights key differences and preferred (baseline) flag
+  * Layout aligns with `wireframe-comparison.md` (e.g., fixed left column for metrics, scrollable scenario columns).
+  * Actions per scenario (Edit, Duplicate, Set Baseline) are functional as described in `wireframe-comparison.md`.
 
 #### 7. **Supabase + Backend Schema Setup**
 
@@ -91,6 +99,7 @@
   * Tables: scenarios, scenario\_groups, default\_settings, tags, users
   * CRUD endpoints for scenarios, defaults, and groups
   * All calculated fields supported
+  * The `scenarios` table schema supports all input fields from `wireframe-new-scenario.md`, including distinctions for W-2/1099, billing models, and HUBZone details.
 
 #### 8. **Filters, Tags, and Favorites**
 
@@ -100,6 +109,7 @@
   * Users can search scenarios by name, project, date, etc.
   * Tag UI with multi-select support
   * Toggle favorite flag
+  * Users can filter scenarios by 'Scenario Group'.
 
 #### 9. **Default Settings Panel**
 
