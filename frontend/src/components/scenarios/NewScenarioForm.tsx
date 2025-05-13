@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { format } from 'date-fns';
 import { 
   Calendar as CalendarIcon, 
@@ -12,7 +12,10 @@ import {
   FileText, 
   Percent 
 } from 'lucide-react';
-import { DateRange } from 'react-day-picker';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { scenarioSchema, ScenarioFormData } from '@/lib/schema/scenarioSchema';
+import { useNavigate } from 'react-router-dom';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -44,6 +47,7 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
 
 // Helper component for form field with label and tooltip
 const FormField = ({ 
@@ -51,16 +55,18 @@ const FormField = ({
   label, 
   tooltip, 
   children,
-  className
+  className,
+  error
 }: { 
   id: string, 
   label: string, 
   tooltip: string, 
   children: React.ReactNode,
-  className?: string
+  className?: string,
+  error?: string
 }) => (
-  <div className={cn("form-field", className)}>
-    <div className="flex items-center gap-1.5 mb-2">
+  <div className={cn("form-field space-y-2", className)}>
+    <div className="flex items-baseline gap-1.5">
       <Label 
         htmlFor={id} 
         className="text-sm font-medium"
@@ -79,103 +85,153 @@ const FormField = ({
       </TooltipProvider>
     </div>
     {children}
+    {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
   </div>
 );
 
 const NewScenarioForm: React.FC = () => {
-  const [staffType, setStaffType] = useState<'W-2' | '1099'>('W-2');
-  const [workloadMode, setWorkloadMode] = useState<'monthly' | 'yearly'>('monthly');
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    {
-      from: new Date(),
-      to: undefined,
+  const navigate = useNavigate();
+  const { 
+    register, 
+    handleSubmit, 
+    control,
+    watch,
+    setValue,
+    formState: { errors, isSubmitting }
+  } = useForm<ScenarioFormData>({
+    resolver: zodResolver(scenarioSchema),
+    defaultValues: {
+      fullName: '',
+      roleTitle: '',
+      projectName: '',
+      staffType: 'W-2',
+      clickUpLink: '',
+      workloadMode: 'Hours/Month',
+      hours: undefined,
+      periodStartDate: new Date(),
+      periodEndDate: undefined,
+      payableHoursOverride: undefined,
+      salary: undefined,
+      taxRate: undefined,
+      benefitsRate: undefined,
+      bonusRate: undefined,
+      hourlyRate: undefined,
+      bonusType1099: undefined,
+      bonusValue1099: undefined,
+      billingType: 'Hourly',
+      billableHours: undefined,
+      billRate: undefined,
+      fixedFee: undefined,
+      overhead: undefined,
+      hubzoneFee: undefined,
+      hubzoneResident: undefined,
+      tags: [],
+      scenarioGroup: '',
     }
-  );
-  // Compensation State
-  const [salary, setSalary] = useState<string>('');
-  const [taxRate, setTaxRate] = useState<string>('');
-  const [benefitsRate, setBenefitsRate] = useState<string>('');
-  const [w2BonusRate, setW2BonusRate] = useState<string>('');
-  const [hourlyRate, setHourlyRate] = useState<string>('');
-  const [bonusType1099, setBonusType1099] = useState<'percent' | 'fixed'>('percent');
-  const [bonusValue1099, setBonusValue1099] = useState<string>('');
-  const [hours, setHours] = useState<string>('');
-  const [payableHoursOverride, setPayableHoursOverride] = useState<string>('');
-  // Billing State
-  const [billingType, setBillingType] = useState<'Hourly' | 'Fixed Price'>('Hourly');
-  const [billableRate, setBillableRate] = useState<string>('');
-  const [fixedFeeAmount, setFixedFeeAmount] = useState<string>('');
-  const [billableHoursOverride, setBillableHoursOverride] = useState<string>('');
-  const [billableHours, setBillableHours] = useState<string>('160');
-  // Financial Assumptions (Overrides) State - NEW
-  const [employerTaxesPercent, setEmployerTaxesPercent] = useState<string>('');
-  const [benefitsPercent, setBenefitsPercent] = useState<string>('');
-  const [overheadPercent, setOverheadPercent] = useState<string>('');
-  const [targetMarginPercent, setTargetMarginPercent] = useState<string>('');
-  // Overhead & Fees State (old, may need review based on new section)
-  const [overheadAllocation, setOverheadAllocation] = useState<string>('');
-  const [hubzoneFee, setHubzoneFee] = useState<string>('');
-  const [hubzoneResidence, setHubzoneResidence] = useState<'Yes' | 'No' | 'TBD' | ''>('');
-  // Tags & Group State / Metadata State - NEW
-  const [tags, setTagsValue] = useState<string>('');
-  const [scenarioGroup, setScenarioGroup] = useState<string>('');
-  const [clickupLink, setClickupLinkValue] = useState<string>('');
-  const [notes, setNotes] = useState<string>('');
-  // Added missing state from wireframe Section 1
-  const [scenarioName, setScenarioName] = useState<string>('');
-  const [personName, setPersonName] = useState<string>('');
-  const [projectName, setProjectName] = useState<string>('');
-  const [roleTitle, setRoleTitle] = useState<string>('');
+  });
+
+  const watchedStaffType = watch('staffType');
+  const watchedBillingType = watch('billingType');
+  const watchedBonusType1099 = watch('bonusType1099');
+
+  // Mock API call function
+  const mockSaveScenarioApi = async (data: ScenarioFormData): Promise<{ id: string }> => {
+    console.log("Mock API: Saving data...", data);
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Simulate a 50/50 chance of success or error for testing
+        if (Math.random() > 0.5) {
+          console.log("Mock API: Save successful!");
+          resolve({ id: `mock_id_${Date.now()}` }); // Return a mock scenario ID
+        } else {
+          console.error("Mock API: Save failed!");
+          reject(new Error("Simulated API error: Failed to save scenario."));
+        }
+      }, 1500); // Simulate 1.5 seconds network delay
+    });
+  };
+
+  const onSubmit = async (data: ScenarioFormData) => { // Make onSubmit async
+    // 1. Parse Tags: Convert comma-separated string to array of strings
+    //    Trims whitespace and filters out empty strings.
+    const parsedTags = typeof data.tags === 'string' 
+      ? data.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '') 
+      : []; // Default to empty array if tags are not a string (e.g. already an array or undefined)
+
+    // 2. Prepare data for API (including parsed tags and numeric conversions)
+    const apiData = {
+      ...data,
+      // Ensure numeric fields are numbers (valueAsNumber in register helps, but good to be sure)
+      hours: data.hours,
+      payableHoursOverride: data.payableHoursOverride ? Number(data.payableHoursOverride) : undefined,
+      salary: data.salary ? Number(data.salary) : undefined,
+      taxRate: data.taxRate ? Number(data.taxRate) : undefined,
+      benefitsRate: data.benefitsRate ? Number(data.benefitsRate) : undefined,
+      bonusRate: data.bonusRate ? Number(data.bonusRate) : undefined,
+      hourlyRate: data.hourlyRate ? Number(data.hourlyRate) : undefined,
+      bonusValue1099: data.bonusValue1099 ? Number(data.bonusValue1099) : undefined,
+      billableHours: data.billableHours,
+      billRate: data.billRate ? Number(data.billRate) : undefined,
+      fixedFee: data.fixedFee ? Number(data.fixedFee) : undefined,
+      overhead: data.overhead,
+      hubzoneFee: data.hubzoneFee,
+      hubzoneResident: data.hubzoneResident,
+      tags: parsedTags, // Use the parsed array of tags
+    };
+
+    console.log("Submitting to API with (mocked):", apiData);
+
+    try {
+      // 3. Call Mock API
+      const result = await mockSaveScenarioApi(apiData);
+      console.log("Scenario saved successfully with mock ID:", result.id);
+      toast.success("Scenario saved successfully!");
+      // TODO: Phase 4: Show SUCCESS toast notification - DONE
+      navigate(`/scenarios/${result.id}`); // Navigate on success
+      // TODO: Phase 4: Navigate to scenario summary view (e.g., /scenarios/${result.id}) - DONE (placeholder)
+    } catch (error) {
+      console.error("Failed to save scenario:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to save scenario. Please try again.");
+      // TODO: Phase 4: Show ERROR toast notification - DONE
+    }
+    // isSubmitting is automatically handled by RHF resolver
+  };
 
   const getTooltipContent = (fieldName: string): string => {
     switch (fieldName) {
-      // Scenario Details (was Person & Project Info)
-      case 'scenarioName': return "Optional: A descriptive name for this scenario (e.g., John Doe - Project X - High Rate).";
-      case 'personName': return "The full name of the person being modeled.";
+      case 'fullName': return "The full name of the person being modeled.";
+      case 'roleTitle': return "The role or title of the person being modeled.";
       case 'projectName': return "The name of the project or proposal.";
-      // Staff Configuration (was part of Person & Project Info + Compensation)
       case 'staffType': return "Select W-2 for employees or 1099 for contractors.";
-      case 'hubzoneResidence': return "Specify if the W-2 employee resides in a HUBZone.";
-      case 'salary': return "The annual base salary for the W-2 employee.";
-      // Hours & Billing (was Time & Performance + Client Billing Inputs)
-      case 'payableHours': return "The number of hours the staff member will be paid for per month."; 
-      case 'billableHours': return "The number of hours that can be billed to the client per month."; 
-      case 'billingModel': return "Select how the client will be billed: hourly or a fixed price for the engagement."; 
-      case 'billRate': return "The hourly rate charged to the client under the hourly billing model."; 
-      case 'fixedFee': return "The total fixed fee amount charged to the client under the fixed price billing model."; 
-      // Financial Assumptions (Overrides) - NEW
-      case 'employerTaxes': return "Override default employer-paid payroll taxes (e.g., FICA, Medicare) as a percentage of salary. Enter as a whole number (e.g., 7.65 for 7.65%). Leave blank for default.";
-      case 'benefits': return "Override default employer cost for benefits (health, retirement, etc.) as a percentage of salary. Enter as a whole number (e.g., 20 for 20%). Leave blank for default.";
-      case 'overhead': return "Override default percentage of general overhead costs allocated to this scenario. Enter as a whole number (e.g., 15 for 15%). Leave blank for default.";
-      case 'targetMargin': return "Specify a target profit margin for this scenario as a percentage. This can be used for 'what-if' analysis. Enter as a whole number (e.g., 25 for 25%). Leave blank if not needed.";
-      // Metadata (Optional) - NEW
-      case 'clickupUrl': return "Optional: Link to the relevant ClickUp task or ticket for this scenario.";
-      case 'tags': return "Add comma-separated tags for easy filtering and organization (e.g., proposal, key-hire, Q3-review).";
-      case 'notes': return "Add any additional notes, comments, or context about this scenario.";
-      
-      // ---- Old Tooltips to review/remove ----
-      case 'workloadMode': return "Calculate costs based on monthly or total annual hours.";
+      case 'clickUpLink': return "Optional: Link to the relevant ClickUp task or ticket for this scenario.";
+      case 'workloadMode': return "Specify if hours are entered per month or for the entire year.";
       case 'hours': return "The number of hours expected per month or year, based on Workload Mode.";
       case 'period': return "The start and end dates for the scenario analysis.";
-      case 'payableHoursOverride': return "Optional: Enter a different number of hours used for cost calculation if it differs from the Workload hours.";
-      case 'taxRate': return "Employer-paid payroll taxes (e.g., FICA, Medicare) as a percentage of salary. Enter as a whole number (e.g., 7.65 for 7.65%).";
-      case 'benefitsRate': return "Employer cost for benefits (health, retirement, etc.) as a percentage of salary. Enter as a whole number (e.g., 20 for 20%).";
-      case 'w2BonusRate': return "Expected bonus as a percentage of salary for the W-2 employee. Enter as a whole number (e.g., 10 for 10%).";
+      case 'payableHoursOverride': return "Optional: Enter a different total number of payable hours for the period if it differs from calculated hours.";
+      case 'salary': return "The annual base salary for the W-2 employee.";
+      case 'taxRate': return "Employer-paid payroll taxes (e.g., FICA, Medicare) as a percentage of salary. Enter as a whole number (e.g., 7.65 for 7.65%). Leave blank to use default.";
+      case 'benefitsRate': return "Employer cost for benefits (health, retirement, etc.) as a percentage of salary. Enter as a whole number (e.g., 20 for 20%). Leave blank to use default.";
+      case 'bonusRate': return "Expected bonus as a percentage of salary for the W-2 employee. Enter as a whole number (e.g., 10 for 10%). Leave blank for no bonus.";
+      case 'hourlyRate': return "The hourly rate paid to the 1099 contractor.";
       case 'bonusType1099': return "Is the bonus for the 1099 contractor a percentage of their total compensation or a fixed dollar amount?";
       case 'bonusValue1099': return "Enter the bonus percentage (e.g., 5 for 5%) or the fixed dollar amount based on the selected Bonus Type.";
-      case 'billableHoursOverride': return "Optional: Enter a different number of hours used for billing if it differs from Workload/Payable hours.";
-      case 'overheadAllocation': return "The percentage of general overhead costs allocated to this scenario. Enter as a whole number (e.g., 15 for 15%).";
-      case 'hubzoneFee': return "Applicable HUBZone fee as a percentage. Enter as a whole number (e.g., 3 for 3%). Leave blank if not applicable.";
+      case 'billingType': return "Select how the client will be billed: hourly or a fixed price for the engagement.";
+      case 'billableHours': return "The total number of hours that can be billed to the client over the full period.";
+      case 'billRate': return "The hourly rate charged to the client under the hourly billing model.";
+      case 'fixedFee': return "The total fixed fee amount charged to the client under the fixed price billing model.";
+      case 'overhead': return "Percentage or fixed dollar amount for general overhead costs allocated. Use default if blank.";
+      case 'hubzoneFee': return "Applicable HUBZone fee as a percentage or fixed dollar amount. Use default if blank.";
+      case 'hubzoneResident': return "Specify if the W-2 employee resides in a HUBZone (Yes/No/TBD).";
+      case 'tags': return "Add comma-separated tags for easy filtering and organization (e.g., proposal, key-hire, Q3-review).";
+      case 'scenarioGroup': return "Assign this scenario to a group for comparison.";
       default: return "Tooltip information missing.";
     }
   }
 
   return (
     <TooltipProvider>
-      <div className="space-y-6">
-        {/* Grid container for first row of cards */}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Section 1: Scenario Details */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
@@ -187,31 +243,30 @@ const NewScenarioForm: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Internal grid for fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <FormField 
-                  id="scenarioName" 
-                  label="Scenario Name (Optional)" 
-                  tooltip={getTooltipContent('scenarioName')}
+                  id="fullName"
+                  label="Full Name"
+                  tooltip={getTooltipContent('fullName')}
+                  error={errors.fullName?.message}
                 >
                   <Input 
-                    id="scenarioName" 
-                    placeholder="e.g., John Doe - Project X - High Rate" 
-                    value={scenarioName}
-                    onChange={(e) => setScenarioName(e.target.value)}
+                    id="fullName" 
+                    placeholder="e.g., John Doe" 
+                    {...register("fullName")}
                   />
                 </FormField>
                 
                 <FormField 
-                  id="personName" 
-                  label="Person Name" 
-                  tooltip={getTooltipContent('personName')}
+                  id="roleTitle"
+                  label="Role/Title"
+                  tooltip={getTooltipContent('roleTitle')}
+                  error={errors.roleTitle?.message}
                 >
                   <Input 
-                    id="personName" 
-                    placeholder="e.g., John Doe" 
-                    value={personName}
-                    onChange={(e) => setPersonName(e.target.value)}
+                    id="roleTitle" 
+                    placeholder="e.g., Senior Developer" 
+                    {...register("roleTitle")}
                   />
                 </FormField>
 
@@ -219,19 +274,82 @@ const NewScenarioForm: React.FC = () => {
                   id="projectName" 
                   label="Project Name" 
                   tooltip={getTooltipContent('projectName')}
+                  error={errors.projectName?.message}
                 >
                   <Input 
                     id="projectName" 
                     placeholder="e.g., Project Phoenix" 
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
+                    {...register("projectName")}
+                  />
+                </FormField>
+
+                <FormField
+                  id="staffType"
+                  label="Staff Type"
+                  tooltip={getTooltipContent('staffType')}
+                  error={errors.staffType?.message}
+                >
+                  <Controller
+                    name="staffType"
+                    control={control}
+                    render={({ field }) => (
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                        <SelectTrigger id="staffType">
+                          <SelectValue placeholder="Select staff type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="W-2">W-2</SelectItem>
+                          <SelectItem value="1099">1099</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </FormField>
+
+                <FormField
+                  id="clickUpLink"
+                  label="ClickUp Link (Optional)"
+                  tooltip={getTooltipContent('clickUpLink')}
+                  error={errors.clickUpLink?.message}
+                >
+                  <Input
+                    id="clickUpLink"
+                    type="url"
+                    placeholder="https://app.clickup.com/..."
+                    {...register("clickUpLink")}
+                  />
+                </FormField>
+
+                <FormField 
+                  id="tags" 
+                  label="Tags (comma-separated)" 
+                  tooltip={getTooltipContent('tags')}
+                  error={errors.tags?.message as string | undefined}
+                >
+                  <Input 
+                    id="tags" 
+                    placeholder="e.g., proposal, key-hire, Q3-review"
+                    {...register("tags" as any)}
+                  />
+                </FormField>
+
+                <FormField 
+                  id="scenarioGroup" 
+                  label="Scenario Group" 
+                  tooltip={getTooltipContent('scenarioGroup')}
+                  error={errors.scenarioGroup?.message}
+                  className="pt-4 md:col-span-2"
+                >
+                  <Input 
+                    id="scenarioGroup" 
+                    placeholder="e.g., Project Phoenix Q3" 
+                    {...register("scenarioGroup")}
                   />
                 </FormField>
               </div>
             </CardContent>
           </Card>
 
-          {/* Section 2: Staff Configuration */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
@@ -243,216 +361,277 @@ const NewScenarioForm: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Internal grid for fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <FormField 
-                  id="staffType" 
-                  label="Staff Type" 
-                  tooltip={getTooltipContent('staffType')}
+                  id="salary" 
+                  label="Annual Salary" 
+                  tooltip={getTooltipContent('salary')}
+                  error={errors.salary?.message}
                 >
-                  <Select 
-                    value={staffType} 
-                    onValueChange={(value: 'W-2' | '1099') => setStaffType(value)}
-                  >
-                    <SelectTrigger id="staffType">
-                      <SelectValue placeholder="Select staff type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="W-2">W-2</SelectItem>
-                      <SelectItem value="1099">1099</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormField>
-
-                {staffType === 'W-2' && (
-                  <FormField 
-                    id="hubzoneResidence"
-                    label="HUBZone Residence"
-                    tooltip={getTooltipContent('hubzoneResidence')}
-                  >
-                    <Select 
-                       value={hubzoneResidence}
-                       onValueChange={(value: 'Yes' | 'No' | 'TBD' | '') => setHubzoneResidence(value)}
-                    >
-                      <SelectTrigger id="hubzoneResidence">
-                        <SelectValue placeholder="Select HUBZone residence" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Yes">Yes</SelectItem>
-                        <SelectItem value="No">No</SelectItem>
-                        <SelectItem value="TBD">TBD</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormField>
-                )}
-                 {staffType === '1099' && <div className="md:block hidden"></div>} 
-
-                {staffType === 'W-2' ? (
-                  <>
-                    <FormField 
+                  <div className="relative">
+                    <Input 
                       id="salary" 
-                      label="Annual Salary" 
-                      tooltip={getTooltipContent('salary')}
-                    >
-                      <div className="relative">
-                        <Input 
-                          id="salary" 
-                          type="number" 
-                          placeholder="e.g., 80000" 
-                          value={salary}
-                          onChange={(e) => setSalary(e.target.value)}
-                          className="pl-7"
-                        />
-                         <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      </div>
-                    </FormField>
-                    <FormField 
-                      id="bonusPercentage" 
-                      label="Bonus Percentage (Optional)" 
-                      tooltip={getTooltipContent('w2BonusRate')}
-                    >
-                       <div className="relative">
-                          <Input 
-                            id="bonusPercentage" 
-                            type="number" 
-                            placeholder="e.g., 5" 
-                            value={w2BonusRate}
-                            onChange={(e) => setW2BonusRate(e.target.value)}
-                            className="pr-7"
-                          />
-                          <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
-                        </div>
-                    </FormField>
-                  </>
-                ) : (
-                  <>
-                    <FormField 
+                      type="number" 
+                      placeholder="e.g., 80000" 
+                      {...register("salary", { valueAsNumber: true })}
+                      className="pl-7"
+                    />
+                    <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  </div>
+                </FormField>
+                <FormField 
+                  id="taxRate" 
+                  label="Tax Rate" 
+                  tooltip={getTooltipContent('taxRate')}
+                  error={errors.taxRate?.message}
+                >
+                  <div className="relative">
+                    <Input 
+                      id="taxRate" 
+                      type="number" 
+                      placeholder="e.g., 7.65" 
+                      {...register("taxRate", { valueAsNumber: true })}
+                      className="pr-7"
+                    />
+                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
+                  </div>
+                </FormField>
+                <FormField 
+                  id="benefitsRate" 
+                  label="Benefits Rate" 
+                  tooltip={getTooltipContent('benefitsRate')}
+                  error={errors.benefitsRate?.message}
+                >
+                  <div className="relative">
+                    <Input 
+                      id="benefitsRate" 
+                      type="number" 
+                      placeholder="e.g., 20" 
+                      {...register("benefitsRate", { valueAsNumber: true })}
+                      className="pr-7"
+                    />
+                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
+                  </div>
+                </FormField>
+                <FormField 
+                  id="bonusRate" 
+                  label="Bonus Rate" 
+                  tooltip={getTooltipContent('bonusRate')}
+                  error={errors.bonusRate?.message}
+                >
+                  <div className="relative">
+                    <Input 
+                      id="bonusRate" 
+                      type="number" 
+                      placeholder="e.g., 10" 
+                      {...register("bonusRate", { valueAsNumber: true })}
+                      className="pr-7"
+                    />
+                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
+                  </div>
+                </FormField>
+                <FormField 
+                  id="hourlyRate" 
+                  label="Hourly Rate" 
+                  tooltip={getTooltipContent('hourlyRate')}
+                  error={errors.hourlyRate?.message}
+                >
+                  <div className="relative">
+                    <Input 
                       id="hourlyRate" 
-                      label="Hourly Rate" 
-                      tooltip={getTooltipContent('hourlyRate')}
-                    >
-                       <div className="relative">
-                          <Input 
-                            id="hourlyRate" 
-                            type="number" 
-                            placeholder="e.g., 100" 
-                            value={hourlyRate}
-                            onChange={(e) => setHourlyRate(e.target.value)}
-                            className="pl-7"
-                          />
-                          <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                       </div>
-                    </FormField>
-                  </>
-                )}
+                      type="number" 
+                      placeholder="e.g., 100" 
+                      {...register("hourlyRate", { valueAsNumber: true })}
+                      className="pl-7"
+                    />
+                    <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  </div>
+                </FormField>
+                <FormField 
+                  id="bonusType1099" 
+                  label="Bonus Type" 
+                  tooltip={getTooltipContent('bonusType1099')}
+                  error={errors.bonusType1099?.message}
+                >
+                  <Controller
+                    name="bonusType1099"
+                    control={control}
+                    render={({ field }) => (
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                        <SelectTrigger id="bonusType1099">
+                          <SelectValue placeholder="Select bonus type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="%">% of Total Comp</SelectItem>
+                          <SelectItem value="$">Fixed Dollar Amount</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </FormField>
+                <FormField 
+                  id="bonusValue1099" 
+                  label="Bonus Value" 
+                  tooltip={getTooltipContent('bonusValue1099')}
+                  error={errors.bonusValue1099?.message}
+                  className="md:col-span-2"
+                >
+                  <div className="relative">
+                    {watchedBonusType1099 === '$' && <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />} 
+                    <Input 
+                      id="bonusValue1099" 
+                      type="number" 
+                      step="0.01"
+                      placeholder={watchedBonusType1099 === '%' ? "e.g., 5" : "e.g., 5000"} 
+                      {...register("bonusValue1099", { valueAsNumber: true })}
+                      className={cn(watchedBonusType1099 === '$' ? 'pl-7' : 'pr-7')} 
+                    />
+                    {watchedBonusType1099 === '%' && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>}
+                  </div>
+                </FormField>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Grid container for second row of cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Section 3: Hours & Billing */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Clock className="h-5 w-5 text-muted-foreground" />
-                <CardTitle>Hours & Billing</CardTitle>
+                <CardTitle>Time & Performance</CardTitle>
               </div>
-              <CardDescription>
-                Define payable hours, billable hours, and client billing structure.
-              </CardDescription>
+              <CardDescription>Define the time period and workload.</CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Internal grid for fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                <FormField 
-                    id="payableHours" 
-                    label="Payable Hours/Month" 
-                    tooltip={getTooltipContent('payableHours')}
-                  >
-                    <Input 
-                      id="payableHours" 
-                      type="number" 
-                      placeholder="160" 
-                      value={hours}
-                      onChange={(e) => setHours(e.target.value)} 
-                    />
-                  </FormField>
-                   <FormField 
-                    id="billableHours" 
-                    label="Client Billable Hours/Month" 
-                    tooltip={getTooltipContent('billableHours')}
-                  >
-                    <Input 
-                      id="billableHours" 
-                      type="number" 
-                      placeholder="160" 
-                      value={billableHours}
-                      onChange={(e) => setBillableHours(e.target.value)}
-                    />
-                  </FormField>
-                   <FormField 
-                    id="billingModel" 
-                    label="Billing Model" 
-                    tooltip={getTooltipContent('billingModel')}
-                  >
-                     <Select 
-                      value={billingType} 
-                      onValueChange={(value: 'Hourly' | 'Fixed Price') => setBillingType(value)}
-                     >
-                      <SelectTrigger id="billingModel">
-                        <SelectValue placeholder="Select billing model" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Hourly">Hourly</SelectItem>
-                        <SelectItem value="Fixed Price">Fixed Price</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormField>
+                <FormField
+                  id="workloadMode"
+                  label="Workload Mode"
+                  tooltip={getTooltipContent('workloadMode')}
+                  error={errors.workloadMode?.message}
+                >
+                  <Controller
+                    name="workloadMode"
+                    control={control}
+                    render={({ field }) => (
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                        <SelectTrigger id="workloadMode">
+                          <SelectValue placeholder="Select mode" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Hours/Month">Hours/Month</SelectItem>
+                          <SelectItem value="Hours/Year">Hours/Year</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </FormField>
 
-                  {billingType === 'Hourly' ? (
-                    <FormField 
-                      id="billRate" 
-                      label="Client Bill Rate ($/hr)" 
-                      tooltip={getTooltipContent('billRate')}
-                    >
-                       <div className="relative">
-                          <Input 
-                            id="billRate" 
-                            type="number" 
-                            placeholder="e.g., 150" 
-                            value={billableRate}
-                            onChange={(e) => setBillableRate(e.target.value)}
-                            className="pl-7"
+                <FormField 
+                  id="hours" 
+                  label={watch('workloadMode') === 'Hours/Year' ? 'Total Hours/Year' : 'Hours/Month'} 
+                  tooltip={getTooltipContent('hours')}
+                  error={errors.hours?.message}
+                >
+                  <Input 
+                    id="hours" 
+                    type="number" 
+                    placeholder={watch('workloadMode') === 'Hours/Year' ? "e.g., 1920" : "e.g., 160"}
+                    {...register("hours", { valueAsNumber: true })}
+                  />
+                </FormField>
+
+                <FormField
+                  id="periodStartDate"
+                  label="Period Start Date"
+                  tooltip={getTooltipContent('period')}
+                  error={errors.periodStartDate?.message}
+                >
+                  <Controller
+                    name="periodStartDate"
+                    control={control}
+                    render={({ field }) => (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
                           />
-                          <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        </div>
-                    </FormField>
-                  ) : (
-                    <FormField 
-                      id="fixedFee" 
-                      label="Client Fixed Fee" 
-                      tooltip={getTooltipContent('fixedFee')}
-                    >
-                       <div className="relative">
-                          <Input 
-                            id="fixedFee" 
-                            type="number" 
-                            placeholder="e.g., 10000" 
-                            value={fixedFeeAmount}
-                            onChange={(e) => setFixedFeeAmount(e.target.value)}
-                             className="pl-7"
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                  />
+                </FormField>
+
+                <FormField
+                  id="periodEndDate"
+                  label="Period End Date"
+                  tooltip={getTooltipContent('period')}
+                  error={errors.periodEndDate?.message}
+                >
+                  <Controller
+                    name="periodEndDate"
+                    control={control}
+                    render={({ field }) => (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
                           />
-                           <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        </div>
-                    </FormField>
-                  )}
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                  />
+                </FormField>
+
+                <FormField 
+                  id="payableHoursOverride" 
+                  label="Payable Hours Override (Optional)" 
+                  tooltip={getTooltipContent('payableHoursOverride')}
+                  error={errors.payableHoursOverride?.message}
+                  className="md:col-span-2"
+                >
+                  <Input 
+                    id="payableHoursOverride" 
+                    type="number" 
+                    placeholder="e.g., 1880 (Total hours for the period)"
+                    {...register("payableHoursOverride", { valueAsNumber: true })}
+                  />
+                </FormField>
               </div>
             </CardContent>
           </Card>
 
-          {/* Section 4: Financial Assumptions (Overrides) */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
@@ -464,7 +643,6 @@ const NewScenarioForm: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Internal grid for fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <FormField 
                   id="employerTaxes" 
@@ -476,8 +654,7 @@ const NewScenarioForm: React.FC = () => {
                       id="employerTaxes" 
                       type="number" 
                       placeholder="7.65" 
-                      value={employerTaxesPercent}
-                      onChange={(e) => setEmployerTaxesPercent(e.target.value)}
+                      {...register("employerTaxes")}
                       className="pr-7"
                     />
                     <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
@@ -493,8 +670,7 @@ const NewScenarioForm: React.FC = () => {
                       id="benefits" 
                       type="number" 
                       placeholder="15" 
-                      value={benefitsPercent}
-                      onChange={(e) => setBenefitsPercent(e.target.value)}
+                      {...register("benefits")}
                       className="pr-7"
                     />
                     <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
@@ -510,8 +686,7 @@ const NewScenarioForm: React.FC = () => {
                       id="overhead" 
                       type="number" 
                       placeholder="20" 
-                      value={overheadPercent}
-                      onChange={(e) => setOverheadPercent(e.target.value)}
+                      {...register("overhead")}
                       className="pr-7"
                     />
                     <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
@@ -527,8 +702,7 @@ const NewScenarioForm: React.FC = () => {
                       id="targetMargin" 
                       type="number" 
                       placeholder="25" 
-                      value={targetMarginPercent}
-                      onChange={(e) => setTargetMarginPercent(e.target.value)}
+                      {...register("targetMargin")}
                       className="pr-7"
                     />
                     <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
@@ -538,8 +712,7 @@ const NewScenarioForm: React.FC = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Section 5: Metadata (Optional) - Remains full width */}
+        
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
@@ -551,58 +724,224 @@ const NewScenarioForm: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Internal grid for first row of metadata fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-4">
-                <FormField 
-                  id="clickupUrl" 
-                  label="ClickUp URL" 
-                  tooltip={getTooltipContent('clickupUrl')}
-                >
-                  <Input 
-                    id="clickupUrl" 
-                    type="url" 
-                    placeholder="https://app.clickup.com/..." 
-                    value={clickupLink}
-                    onChange={(e) => setClickupLinkValue(e.target.value)}
-                  />
-                </FormField>
-                <FormField 
+              <FormField 
+                id="clickUpLink" 
+                label="ClickUp URL" 
+                tooltip={getTooltipContent('clickUpLink')}
+              >
+                <Input 
+                  id="clickUpLink" 
+                  type="url" 
+                  placeholder="https://app.clickup.com/..." 
+                  {...register("clickUpLink")}
+                />
+              </FormField>
+              <FormField 
+                id="tags" 
+                label="Tags (comma-separated)" 
+                tooltip={getTooltipContent('tags')}
+                error={errors.tags?.message as string | undefined}
+              >
+                <Input 
                   id="tags" 
-                  label="Tags" 
-                  tooltip={getTooltipContent('tags')}
-                >
-                  <Input 
-                    id="tags" 
-                    placeholder="e.g., proposal, key-hire" 
-                    value={tags}
-                    onChange={(e) => setTagsValue(e.target.value)}
-                  />
-                </FormField>
+                  placeholder="e.g., proposal, key-hire, Q3-review"
+                  {...register("tags" as any)}
+                />
+              </FormField>
             </div>
-             {/* Notes field below the grid */}
             <FormField 
-              id="notes" 
-              label="Notes" 
-              tooltip={getTooltipContent('notes')}
+              id="scenarioGroup" 
+              label="Scenario Group" 
+              tooltip={getTooltipContent('scenarioGroup')}
+              error={errors.scenarioGroup?.message}
             >
-              <Textarea 
-                id="notes" 
-                placeholder="Enter notes here..." 
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
+              <Input 
+                id="scenarioGroup" 
+                placeholder="e.g., Project Phoenix Q3" 
+                {...register("scenarioGroup")}
               />
             </FormField>
           </CardContent>
         </Card>
         
-        {/* Buttons remain full width */}
-        <div className="flex justify-end space-x-3 pt-4">
-            <Button variant="outline" type="button">Cancel</Button> 
-            <Button type="submit">Create Scenario</Button> 
-        </div>
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <SlidersHorizontal className="h-5 w-5 text-muted-foreground" />
+              <CardTitle>Client Billing Inputs</CardTitle>
+            </div>
+            <CardDescription>Define how the client is billed for this work.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+               <FormField 
+                 id="billingType" 
+                 label="Billing Type" 
+                 tooltip={getTooltipContent('billingType')}
+                 error={errors.billingType?.message}
+               >
+                  <Controller
+                   name="billingType"
+                   control={control}
+                   render={({ field }) => (
+                     <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                       <SelectTrigger id="billingType">
+                         <SelectValue placeholder="Select billing type" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         <SelectItem value="Hourly">Hourly</SelectItem>
+                         <SelectItem value="Fixed Price">Fixed Price</SelectItem>
+                       </SelectContent>
+                     </Select>
+                   )}
+                 />
+               </FormField>
+               
+               <FormField 
+                 id="billableHours" 
+                 label="Total Billable Hours (Period)" 
+                 tooltip={getTooltipContent('billableHours')}
+                 error={errors.billableHours?.message}
+               >
+                 <Input 
+                   id="billableHours" 
+                   type="number" 
+                   placeholder="e.g., 1800"
+                   {...register("billableHours", { valueAsNumber: true })}
+                 />
+               </FormField>
 
-      </div>
+               {watchedBillingType === 'Hourly' ? (
+                 <FormField 
+                   id="billRate" 
+                   label="Client Bill Rate ($/hr)" 
+                   tooltip={getTooltipContent('billRate')}
+                   error={errors.billRate?.message}
+                   className="md:col-span-2"
+                 >
+                   <div className="relative">
+                     <Input 
+                       id="billRate" 
+                       type="number" 
+                       step="0.01"
+                       placeholder="e.g., 200" 
+                       {...register("billRate", { valueAsNumber: true })}
+                       className="pl-7"
+                     />
+                     <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                   </div>
+                 </FormField>
+               ) : (
+                 <FormField 
+                   id="fixedFee" 
+                   label="Client Fixed Fee (Total)" 
+                   tooltip={getTooltipContent('fixedFee')}
+                   error={errors.fixedFee?.message}
+                    className="md:col-span-2"
+                 >
+                   <div className="relative">
+                     <Input 
+                       id="fixedFee" 
+                       type="number" 
+                       step="0.01"
+                       placeholder="e.g., 250000" 
+                       {...register("fixedFee", { valueAsNumber: true })}
+                       className="pl-7"
+                     />
+                     <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                   </div>
+                 </FormField>
+               )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Percent className="h-5 w-5 text-muted-foreground" />
+              <CardTitle>Overhead & Fees</CardTitle>
+            </div>
+            <CardDescription>Company-wide overhead and specific fees.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <FormField 
+                id="overhead" 
+                label="Overhead (% or $)"
+                tooltip={getTooltipContent('overhead')}
+                error={errors.overhead?.message}
+              >
+                <Input 
+                  id="overhead" 
+                  type="number" 
+                  step="0.01"
+                  placeholder="e.g., 15 (for 15% or $15)" 
+                  {...register("overhead", { valueAsNumber: true })}
+                />
+              </FormField>
+              
+              <FormField 
+                id="hubzoneFee" 
+                label="HUBZone Fee (% or $)"
+                tooltip={getTooltipContent('hubzoneFee')}
+                error={errors.hubzoneFee?.message}
+              >
+                <Input 
+                  id="hubzoneFee" 
+                  type="number" 
+                  step="0.01"
+                  placeholder="e.g., 3 (for 3% or $3)" 
+                  {...register("hubzoneFee", { valueAsNumber: true })}
+                />
+              </FormField>
+
+              {watchedStaffType === 'W-2' && (
+                <FormField 
+                  id="hubzoneResident" 
+                  label="HUBZone Resident?" 
+                  tooltip={getTooltipContent('hubzoneResident')}
+                  error={errors.hubzoneResident?.message}
+                >
+                   <Controller
+                    name="hubzoneResident"
+                    control={control}
+                    render={({ field }) => (
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                        <SelectTrigger id="hubzoneResident">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Yes">Yes</SelectItem>
+                          <SelectItem value="No">No</SelectItem>
+                          <SelectItem value="TBD">TBD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </FormField>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        
+        <div className="flex justify-end mt-8 space-x-3">
+          <Button 
+            type="button" 
+            variant="outline" 
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button> 
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : 'Save Scenario & View Summary'}
+          </Button> 
+        </div>
+      </form>
     </TooltipProvider>
   );
 };

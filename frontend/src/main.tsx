@@ -4,6 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import { ClerkProvider } from '@clerk/clerk-react'
 import { BrowserRouter } from 'react-router-dom'
+import { Toaster } from 'sonner';
 
 // TODO: Replace with your actual Clerk publishable key from the Clerk Dashboard
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'pk_test_YOUR_PUBLISHABLE_KEY';
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ClerkProvider publishableKey={clerkPubKey}>
       <BrowserRouter>
         <App />
+        <Toaster />
       </BrowserRouter>
     </ClerkProvider>
   </React.StrictMode>,
