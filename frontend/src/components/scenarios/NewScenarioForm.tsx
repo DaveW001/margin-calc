@@ -716,58 +716,6 @@ const NewScenarioForm: React.FC = () => {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>Metadata (Optional)</CardTitle>
-            </div>
-            <CardDescription>
-              Additional information for tracking and organization.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-4">
-              <FormField 
-                id="clickUpLink" 
-                label="ClickUp URL" 
-                tooltip={getTooltipContent('clickUpLink')}
-              >
-                <Input 
-                  id="clickUpLink" 
-                  type="url" 
-                  placeholder="https://app.clickup.com/..." 
-                  {...register("clickUpLink")}
-                />
-              </FormField>
-              <FormField 
-                id="tags" 
-                label="Tags (comma-separated)" 
-                tooltip={getTooltipContent('tags')}
-                error={errors.tags?.message as string | undefined}
-              >
-                <Input 
-                  id="tags" 
-                  placeholder="e.g., proposal, key-hire, Q3-review"
-                  {...register("tags" as any)}
-                />
-              </FormField>
-            </div>
-            <FormField 
-              id="scenarioGroup" 
-              label="Scenario Group" 
-              tooltip={getTooltipContent('scenarioGroup')}
-              error={errors.scenarioGroup?.message}
-            >
-              <Input 
-                id="scenarioGroup" 
-                placeholder="e.g., Project Phoenix Q3" 
-                {...register("scenarioGroup")}
-              />
-            </FormField>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
               <SlidersHorizontal className="h-5 w-5 text-muted-foreground" />
               <CardTitle>Client Billing Inputs</CardTitle>
             </div>
