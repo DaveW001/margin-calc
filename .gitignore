@@ -1,1 +1,7 @@
 .env
+
+# Knowledge base symbolic link
+knowledge-base/
+
+# Shared cursor rules
+.cursor/rules/shared/

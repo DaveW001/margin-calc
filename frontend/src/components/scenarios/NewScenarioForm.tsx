@@ -209,8 +209,8 @@ const NewScenarioForm: React.FC = () => {
       case 'period': return "The start and end dates for the scenario analysis.";
       case 'payableHoursOverride': return "Optional: Enter a different total number of payable hours for the period if it differs from calculated hours.";
       case 'salary': return "The annual base salary for the W-2 employee.";
-      case 'taxRate': return "Employer-paid payroll taxes (e.g., FICA, Medicare) as a percentage of salary. Enter as a whole number (e.g., 7.65 for 7.65%). Leave blank to use default.";
-      case 'benefitsRate': return "Employer cost for benefits (health, retirement, etc.) as a percentage of salary. Enter as a whole number (e.g., 20 for 20%). Leave blank to use default.";
+      case 'taxRate': return "Employer-paid payroll taxes (e.g., FICA, Medicare) as a percentage of salary. Enter as a whole number (e.g., 7.65 for 7.65%). This value overrides the system default.";
+      case 'benefitsRate': return "Employer cost for benefits (health, retirement, etc.) as a percentage of salary. Enter as a whole number (e.g., 20 for 20%). This value overrides the system default.";
       case 'bonusRate': return "Expected bonus as a percentage of salary for the W-2 employee. Enter as a whole number (e.g., 10 for 10%). Leave blank for no bonus.";
       case 'hourlyRate': return "The hourly rate paid to the 1099 contractor.";
       case 'bonusType1099': return "Is the bonus for the 1099 contractor a percentage of their total compensation or a fixed dollar amount?";
@@ -380,6 +380,23 @@ const NewScenarioForm: React.FC = () => {
                   </div>
                 </FormField>
                 <FormField 
+                  id="hourlyRate" 
+                  label="Hourly Rate" 
+                  tooltip={getTooltipContent('hourlyRate')}
+                  error={errors.hourlyRate?.message}
+                >
+                  <div className="relative">
+                    <Input 
+                      id="hourlyRate" 
+                      type="number" 
+                      placeholder="e.g., 100" 
+                      {...register("hourlyRate", { valueAsNumber: true })}
+                      className="pl-7"
+                    />
+                    <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  </div>
+                </FormField>
+                <FormField 
                   id="taxRate" 
                   label="Tax Rate" 
                   tooltip={getTooltipContent('taxRate')}
@@ -431,23 +448,6 @@ const NewScenarioForm: React.FC = () => {
                   </div>
                 </FormField>
                 <FormField 
-                  id="hourlyRate" 
-                  label="Hourly Rate" 
-                  tooltip={getTooltipContent('hourlyRate')}
-                  error={errors.hourlyRate?.message}
-                >
-                  <div className="relative">
-                    <Input 
-                      id="hourlyRate" 
-                      type="number" 
-                      placeholder="e.g., 100" 
-                      {...register("hourlyRate", { valueAsNumber: true })}
-                      className="pl-7"
-                    />
-                    <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  </div>
-                </FormField>
-                <FormField 
                   id="bonusType1099" 
                   label="Bonus Type" 
                   tooltip={getTooltipContent('bonusType1099')}
@@ -469,26 +469,50 @@ const NewScenarioForm: React.FC = () => {
                     )}
                   />
                 </FormField>
-                <FormField 
-                  id="bonusValue1099" 
-                  label="Bonus Value" 
-                  tooltip={getTooltipContent('bonusValue1099')}
-                  error={errors.bonusValue1099?.message}
-                  className="md:col-span-2"
-                >
-                  <div className="relative">
-                    {watchedBonusType1099 === '$' && <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />} 
-                    <Input 
-                      id="bonusValue1099" 
-                      type="number" 
-                      step="0.01"
-                      placeholder={watchedBonusType1099 === '%' ? "e.g., 5" : "e.g., 5000"} 
-                      {...register("bonusValue1099", { valueAsNumber: true })}
-                      className={cn(watchedBonusType1099 === '$' ? 'pl-7' : 'pr-7')} 
-                    />
-                    {watchedBonusType1099 === '%' && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>}
-                  </div>
+                <FormField                   
+                  id="bonusValue1099"                   
+                  label="Bonus Value"                   
+                  tooltip={getTooltipContent('bonusValue1099')}                  
+                  error={errors.bonusValue1099?.message}                  
+                >                  
+                  <div className="relative">                    
+                    {watchedBonusType1099 === '$' && <DollarSign className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />}                     
+                    <Input                       
+                      id="bonusValue1099"                       
+                      type="number"                       
+                      step="0.01"                      
+                      placeholder={watchedBonusType1099 === '%' ? "e.g., 5" : "e.g., 5000"}                       
+                      {...register("bonusValue1099", { valueAsNumber: true })}                      
+                      className={cn(watchedBonusType1099 === '$' ? 'pl-7' : 'pr-7')}                     
+                    />                    
+                    {watchedBonusType1099 === '%' && <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>}                  
+                  </div>                
                 </FormField>
+                {watchedStaffType === 'W-2' && (                  
+                  <FormField                     
+                    id="hubzoneResident"                     
+                    label="HUBZone Resident?"                     
+                    tooltip={getTooltipContent('hubzoneResident')}                    
+                    error={errors.hubzoneResident?.message}                    
+                  >                    
+                    <Controller                      
+                      name="hubzoneResident"                      
+                      control={control}                      
+                      render={({ field }) => (                        
+                        <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>                          
+                          <SelectTrigger id="hubzoneResident">                            
+                            <SelectValue placeholder="Select..." />                          
+                          </SelectTrigger>                          
+                          <SelectContent>                            
+                            <SelectItem value="Yes">Yes</SelectItem>                            
+                            <SelectItem value="No">No</SelectItem>                            
+                            <SelectItem value="TBD">TBD</SelectItem>                          
+                          </SelectContent>                        
+                        </Select>                      
+                      )}                    
+                    />                  
+                  </FormField>                
+                )}
               </div>
             </CardContent>
           </Card>
@@ -639,58 +663,38 @@ const NewScenarioForm: React.FC = () => {
                 <CardTitle>Financial Assumptions (Overrides)</CardTitle>
               </div>
               <CardDescription>
-                Override default financial percentages for this specific scenario if needed. Leave blank to use current app defaults (shown as placeholder).
+                Override default financial percentages and fees for this specific scenario if needed. This includes overhead, HUBZone fees, and target margins.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <FormField 
-                  id="employerTaxes" 
-                  label="Employer Taxes %" 
-                  tooltip={getTooltipContent('employerTaxes')}
-                >
-                  <div className="relative">
-                    <Input 
-                      id="employerTaxes" 
-                      type="number" 
-                      placeholder="7.65" 
-                      {...register("employerTaxes")}
-                      className="pr-7"
-                    />
-                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
-                  </div>
-                </FormField>
-                <FormField 
-                  id="benefits" 
-                  label="Benefits %" 
-                  tooltip={getTooltipContent('benefits')}
-                >
-                  <div className="relative">
-                    <Input 
-                      id="benefits" 
-                      type="number" 
-                      placeholder="15" 
-                      {...register("benefits")}
-                      className="pr-7"
-                    />
-                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
-                  </div>
-                </FormField>
-                <FormField 
                   id="overhead" 
-                  label="Overhead %" 
+                  label="Overhead (% or $)" 
                   tooltip={getTooltipContent('overhead')}
+                  error={errors.overhead?.message}
                 >
-                  <div className="relative">
-                    <Input 
-                      id="overhead" 
-                      type="number" 
-                      placeholder="20" 
-                      {...register("overhead")}
-                      className="pr-7"
-                    />
-                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">%</span>
-                  </div>
+                  <Input 
+                    id="overhead" 
+                    type="number" 
+                    step="0.01"
+                    placeholder="e.g., 15 (for 15% or $15)" 
+                    {...register("overhead", { valueAsNumber: true })}
+                  />
+                </FormField>
+                <FormField 
+                  id="hubzoneFee" 
+                  label="HUBZone Fee (% or $)"
+                  tooltip={getTooltipContent('hubzoneFee')}
+                  error={errors.hubzoneFee?.message}
+                >
+                  <Input 
+                    id="hubzoneFee" 
+                    type="number" 
+                    step="0.01"
+                    placeholder="e.g., 3 (for 3% or $3)" 
+                    {...register("hubzoneFee", { valueAsNumber: true })}
+                  />
                 </FormField>
                 <FormField 
                   id="targetMargin" 
@@ -805,75 +809,9 @@ const NewScenarioForm: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Percent className="h-5 w-5 text-muted-foreground" />
-              <CardTitle>Overhead & Fees</CardTitle>
-            </div>
-            <CardDescription>Company-wide overhead and specific fees.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-              <FormField 
-                id="overhead" 
-                label="Overhead (% or $)"
-                tooltip={getTooltipContent('overhead')}
-                error={errors.overhead?.message}
-              >
-                <Input 
-                  id="overhead" 
-                  type="number" 
-                  step="0.01"
-                  placeholder="e.g., 15 (for 15% or $15)" 
-                  {...register("overhead", { valueAsNumber: true })}
-                />
-              </FormField>
-              
-              <FormField 
-                id="hubzoneFee" 
-                label="HUBZone Fee (% or $)"
-                tooltip={getTooltipContent('hubzoneFee')}
-                error={errors.hubzoneFee?.message}
-              >
-                <Input 
-                  id="hubzoneFee" 
-                  type="number" 
-                  step="0.01"
-                  placeholder="e.g., 3 (for 3% or $3)" 
-                  {...register("hubzoneFee", { valueAsNumber: true })}
-                />
-              </FormField>
-
-              {watchedStaffType === 'W-2' && (
-                <FormField 
-                  id="hubzoneResident" 
-                  label="HUBZone Resident?" 
-                  tooltip={getTooltipContent('hubzoneResident')}
-                  error={errors.hubzoneResident?.message}
-                >
-                   <Controller
-                    name="hubzoneResident"
-                    control={control}
-                    render={({ field }) => (
-                      <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
-                        <SelectTrigger id="hubzoneResident">
-                          <SelectValue placeholder="Select..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Yes">Yes</SelectItem>
-                          <SelectItem value="No">No</SelectItem>
-                          <SelectItem value="TBD">TBD</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </FormField>
-              )}
-            </div>
-          </CardContent>
-        </Card>
         
+        
+                
         <div className="flex justify-end mt-8 space-x-3">
           <Button 
             type="button" 

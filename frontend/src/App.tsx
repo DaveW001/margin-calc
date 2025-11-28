@@ -4,6 +4,7 @@ import { Header } from './components/Header'
 import { Sidebar } from './components/Sidebar'
 import { Routes, Route } from 'react-router-dom'
 import NewScenarioPage from './pages/NewScenarioPage'
+import ScenarioPage from './pages/ScenarioPage'
 import SettingsPage from './pages/SettingsPage'
 
 const HomePage = () => (
@@ -35,6 +36,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/scenarios/new" element={<NewScenarioPage />} />
+                <Route path="/scenarios/:id" element={<ScenarioPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Routes>
             </main>

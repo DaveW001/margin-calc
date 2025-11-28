@@ -1,0 +1,27 @@
+﻿# margin-calc - Cursor AI Assistant Rules
+# Auto-generated on 2025-08-28 - Universal AI Rules Deployment
+
+# Include shared ClickUp MCP configuration
+`@include "./.cursor/rules/shared/clickup-config.mdc"
+
+# Include universal AI assistant rules (core guidance for all PA projects)
+`@include "../knowledge-base/06_cursor_and_development_tools/universal-ai-assistant-rules.cursorrules"
+
+## Project-Specific Context
+# Project Name: margin-calc
+# Last Updated: 2025-08-28
+# Auto-deployed: Universal AI assistant rules
+
+## Project-Specific Development Guidelines
+# TODO: Add project-specific guidelines here
+# Review any backed-up cursor rules files for project-specific content to merge
+
+## Project-Specific File References
+# Key project files that AI should prioritize:
+# - README.md (project overview)
+# - docs/ (project documentation)
+# - docs/issues.md or similar (troubleshooting reference)
+
+## Project-Specific Issues Reference
+# Check for project issues documentation in docs/ directory
+# Critical for avoiding re-solving known problems
