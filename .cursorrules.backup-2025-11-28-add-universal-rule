@@ -26,6 +26,10 @@
 
 @include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/file-naming.mdc"
 
+@include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/mcp-tool-usage.mdc"
+
+@include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/delivery-methodology.mdc"
+
 # === END UNIVERSAL RULES ===
 
 # ═══════════════════════════════════════════════════════════════════════

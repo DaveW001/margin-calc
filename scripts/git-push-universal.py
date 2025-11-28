@@ -11,6 +11,21 @@ import os
 from datetime import datetime
 import json
 
+# --- Output Encoding Safety (Windows + Emojis) ------------------------------
+# Some Windows Python environments default to cp1252, which can't encode emoji
+# characters used in this script. This block forces UTF-8 encoding for stdout/
+# stderr where supported so the script won't crash with UnicodeEncodeError.
+if os.name == "nt":
+    try:
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        if hasattr(sys.stderr, "reconfigure"):
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        # If reconfigure isn't supported, fall back silently – worst case the
+        # console may show placeholder characters, but the script will still run.
+        pass
+
 # Configuration - Edit these defaults or create a .git-config.json file
 DEFAULT_CONFIG = {
     "commit_prefix": "feat",
@@ -124,6 +139,8 @@ def run_git_command(command, timeout=30):
             shell=True,
             capture_output=True,
             text=True,
+            encoding='utf-8',
+            errors='replace',
             timeout=timeout,
             env=env,
             creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0

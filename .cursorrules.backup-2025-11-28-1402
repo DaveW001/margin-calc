@@ -38,8 +38,6 @@
 
 @include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/terminal-troubleshooting.mdc"
 
-@include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/vibe-coding-universal.mdc"
-
 # === END UNIVERSAL RULES ===
 
 # ═══════════════════════════════════════════════════════════════════════
