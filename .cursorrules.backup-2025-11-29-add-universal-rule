@@ -1,11 +1,11 @@
-﻿# margin-calc - Cursor AI Assistant Rules
+# margin-calc - Cursor AI Assistant Rules
 # Auto-generated on 2025-11-28 - Universal AI Rules Deployment
 
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# ═══════════════════════════════════════════════════════════════════════
 # UNIVERSAL RULES - DO NOT MODIFY THIS SECTION
 # These rules apply to ALL Packaged Agile development projects
 # Source: c:\development\01-knowledge-base\06_cursor_and_development_tools\cursor-rules\
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# ═══════════════════════════════════════════════════════════════════════
 
 # Universal ClickUp Assistant - Task creation, prioritization, meeting notes
 `@include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/clickup-workflow.mdc"
@@ -40,14 +40,12 @@
 
 @include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/vibe-coding-universal.mdc"
 
-@include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/file-conversion.mdc"
-
 # === END UNIVERSAL RULES ===
 
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# ═══════════════════════════════════════════════════════════════════════
 # PROJECT-SPECIFIC RULES - CUSTOMIZE BELOW
 # Add project-specific guidelines, constraints, and context here
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# ═══════════════════════════════════════════════════════════════════════
 
 ## Project Context
 # Project Name: margin-calc
