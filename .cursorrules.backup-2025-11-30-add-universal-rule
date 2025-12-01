@@ -1,4 +1,4 @@
-# margin-calc - Cursor AI Assistant Rules
+﻿# margin-calc - Cursor AI Assistant Rules
 # Auto-generated on 2025-11-28 - Universal AI Rules Deployment
 
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -41,8 +41,6 @@
 @include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/vibe-coding-universal.mdc"
 
 @include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/file-conversion.mdc"
-
-@include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/readability-flesch-kincaid.mdc"
 
 # === END UNIVERSAL RULES ===
 
