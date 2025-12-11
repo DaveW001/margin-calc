@@ -44,6 +44,8 @@
 
 @include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/readability-flesch-kincaid.mdc"
 
+@include "../01-knowledge-base/06_cursor_and_development_tools/cursor-rules/meeting-insights-analyzer.mdc"
+
 # === END UNIVERSAL RULES ===
 
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
