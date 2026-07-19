@@ -1,0 +1,64 @@
+# OpenCode Ignore File
+# Restricts AI access to files and directories using gitignore-style patterns
+# Last Updated: 2026-01-01
+
+# Dependencies
+node_modules/
+vendor/
+.pnpm-store/
+.yarn/
+.yarn/cache/
+
+# Build artifacts
+dist/
+build/
+out/
+coverage/
+.next/
+.nuxt/
+.svelte-kit/
+
+# Compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.class
+*.pyc
+
+# Secrets
+.env*
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+.aws/
+.ssh/
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Generated
+*.min.js
+*.min.css
+generated/
+__generated__/
+
+# VCS internals
+.git/
+
+# Osgrep data and cache
+.osgrep/
+
+
+# Osgrep data and cache
+.osgrep/
+
