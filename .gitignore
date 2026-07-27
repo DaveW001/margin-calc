@@ -6,3 +6,5 @@ knowledge-base/
 # Shared cursor rules
 .cursor/rules/shared/
 .osgrep
+# OpenCode runtime state (node_modules, skills, package files)
+.opencode/
